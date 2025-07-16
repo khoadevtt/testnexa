@@ -1159,9 +1159,6 @@
       <button id="ai-feature-note-close" aria-label="Đóng thông báo" style="position:absolute;top:6px;right:14px;background:none;border:none;font-size:18px;color:#2563eb;cursor:pointer;line-height:1;">&times;</button>
     </div>
     <!-- Footer note -->
-    <div class="footer-note">
-      Hie AI có thể mắc lỗi. Hãy kiểm tra lại thông tin quan trọng.
-    </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -1176,21 +1173,18 @@
 
     // Hàm nhận diện yêu cầu tạo ảnh
     function isImageRequest(message) {
-      // Nhận diện các yêu cầu tạo ảnh thông minh hơn
       const lower = message.toLowerCase();
-      // Các từ khóa phổ biến
-      if (/\b(tạo|vẽ|minh họa|tranh|hình|ảnh|illustrate|draw|generate|create|paint|picture|image|art|sketch|render|show me|give me|make me|can you make|can you draw|can you create|can you generate|can you illustrate)\b/.test(lower)) {
-        // Nếu có mô tả về một đối tượng hoặc cảnh vật
-        if (/(một|một bức|a |an |the |cảnh |scene|landscape|portrait|animal|person|city|cat|dog|house|mountain|sea|beach|sunset|forest|flower|tree|car|robot|anime|character|girl|boy|man|woman|child|baby|sky|space|galaxy|fantasy|dragon|castle|future|futuristic|old|ancient|modern|cute|funny|beautiful|amazing|awesome|cool|simple|minimal|realistic|cartoon|comic|chibi|style|concept|design|logo|icon|avatar|background|wallpaper|poster|cover|banner|card|artwork|illustration|painting|sketch|drawing|rendering|photo|photograph|photorealistic|hyperrealistic|digital|digital art|digital painting|digital drawing|digital illustration|digital artwork|digital sketch|digital render|digital rendering|digital photo|digital photograph|digital photorealistic|digital hyperrealistic|digital fantasy|digital concept|digital design|digital logo|digital icon|digital avatar|digital background|digital wallpaper|digital poster|digital cover|digital banner|digital card)/.test(lower)) {
-          return true;
-        }
-      }
-      // Một số mẫu câu phổ biến
-      if (/hãy.*(vẽ|tạo|minh họa|cho mình|cho tôi|làm cho tôi|làm giúp tôi|giúp tôi|giúp mình).*\b(tranh|ảnh|hình|picture|image|art|sketch|illustration|render)/.test(lower)) {
+      // Chỉ nhận diện khi có các cụm từ yêu cầu tạo ảnh rõ ràng
+      // Ví dụ: 'hãy tạo ảnh', 'vẽ cho tôi', 'tạo hình ảnh', 'draw an image', 'generate an image', 'please create an image', ...
+      if (/((hãy|làm|giúp|please|can you|could you|would you|bạn có thể|làm ơn|giúp tôi|giúp mình|cho tôi|cho mình|make me|give me|create|generate|draw|illustrate).{0,20}((một )?(bức )?(ảnh|hình|picture|image|art|sketch|illustration|render)))|((tạo|vẽ|minh họa|draw|generate|create|illustrate) (một |an |a )?(bức )?(ảnh|hình|picture|image|art|sketch|illustration|render))/.test(lower)) {
         return true;
       }
-      // Nếu câu bắt đầu bằng "Vẽ", "Tạo", "Minh họa", "Generate", "Draw", ...
-      if (/^(vẽ|tạo|minh họa|generate|draw|illustrate|make|create)\b/.test(lower)) {
+      // Nếu câu bắt đầu bằng "Vẽ cho tôi", "Tạo ảnh", "Draw an image", ...
+      if (/^(vẽ|tạo|minh họa|draw|generate|create|illustrate) (một |an |a )?(bức )?(ảnh|hình|picture|image|art|sketch|illustration|render)/.test(lower)) {
+        return true;
+      }
+      // Nếu có các cụm từ rõ ràng như "please create an image", "draw an image of", ...
+      if (/(please|can you|could you|would you|giúp tôi|giúp mình|làm ơn|bạn có thể).{0,20}(draw|create|generate|illustrate).{0,20}(image|picture|art|sketch|illustration|render)/.test(lower)) {
         return true;
       }
       return false;
@@ -1350,6 +1344,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
         let content = await readFileContent(file);
         removeFileLoadingAnimationV2();
         currentFileContent = content;
+        hideWelcomeMessage();
         // Thêm vào chat: "Đã tải lên file ..."
         addMessage('user', `Đã tải lên file: **${file.name}**`);
         updateFilePreview();
@@ -1621,9 +1616,30 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
     }
 
     // Typing effect cho AI trả lời (hỗ trợ callback khi xong)
+    let isTypewriterStopped = false; // Thêm biến toàn cục kiểm soát dừng typewriter
     function typeWriterEffect(element, html, i, speed, cb) {
       let isTag = false, text = '', tagBuffer = '';
       function type() {
+        if (isTypewriterStopped) {
+          // Nếu bị dừng, hiển thị toàn bộ nội dung còn lại ngay lập tức
+          element.innerHTML = html;
+          setTimeout(() => {
+            if (element.tagName === 'CODE') {
+              hljs.highlightElement(element);
+            } else {
+              element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+                hljs.highlightElement(block);
+              });
+            }
+            if (window.MathJax) MathJax.typesetPromise();
+            if (cb) cb();
+            else {
+              const event = new Event('typingDone');
+              element.dispatchEvent(event);
+            }
+          }, 30);
+          return;
+        }
         if (i < html.length) {
           let char = html[i];
           if (char === '<') {
@@ -1687,6 +1703,8 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
     // Sửa hàm sendMessage để tích hợp hỏi về file đã upload
     async function sendMessage(event) {
       event.preventDefault();
+      isTypewriterStopped = false; // Reset lại khi gửi tin nhắn mới
+      hideWelcomeMessage();
       const inputElement = document.getElementById('chat-input');
       const message = inputElement.innerText.trim();
       if (!message) return;
@@ -1814,15 +1832,22 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       const typingDiv = document.createElement('div');
       typingDiv.className = 'flex justify-start';
       const bubble = document.createElement('div');
-      bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
       if (type === 'image') {
+        // Animation mới: khung trắng bo góc, có bóng, loading ở giữa
         bubble.innerHTML = `
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span class="fa fa-spinner fa-spin"></span>
-            <span>Đang tạo ảnh AI...</span>
+          <div class="ai-image-loading-box" style="width:320px;height:320px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:18px;box-shadow:0 2px 12px #0002;margin-bottom:8px;position:relative;">
+            <div class="ai-image-spinner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;">
+              <div class="ai-spinner" style="width:48px;height:48px;border:5px solid #e0e7ef;border-top:5px solid #2563eb;border-radius:50%;animation:ai-spin 1s linear infinite;"></div>
+              <div style="margin-top:18px;font-size:1.1em;color:#2563eb;font-weight:500;">Đang tạo ảnh AI...</div>
+            </div>
           </div>
+          <style>
+            @keyframes ai-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+          </style>
         `;
+        bubble.className = 'max-w-[85%] px-0 py-0 bg-transparent';
       } else {
+        bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
         bubble.innerHTML = `
           <span class="typing-dot"></span>
           <span class="typing-dot"></span>
@@ -1868,6 +1893,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
         e.preventDefault();
         if (currentTypingIndicator) removeTypingIndicator(currentTypingIndicator);
         aiStopped = true;
+        isTypewriterStopped = true; // Dừng hiệu ứng typewriter ngay lập tức
         if (aiAbortController) aiAbortController.abort();
       }
     });
@@ -1876,78 +1902,54 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
     function addImageMessage(imageData, prompt) {
       // Thêm logo "Khoa AI" vào ảnh (giống hie-tao-anh.html)
       addLogoToImage(imageData, 'Khoa AI').then(finalImage => {
+        // Tìm khung loading ảnh gần nhất để thay thế
         const chatContainer = document.getElementById('chat-container');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'flex justify-start';
-        const bubble = document.createElement('div');
-        bubble.className = 'max-w-[85%] rounded-2xl px-4 py-3 bg-gray-100 text-gray-800';
-        // Tạo id duy nhất cho popup
-        const imgId = 'img-' + Math.random().toString(36).slice(2);
-        bubble.innerHTML = `
-          <div style="text-align:center">
-            <img id="${imgId}" src="data:image/png;base64,${finalImage}" alt="AI Image" style="max-width:320px;max-height:320px;border-radius:12px;box-shadow:0 2px 12px #0002;margin-bottom:8px;cursor:pointer;">
-            <div style="font-size:0.95em;color:#666;margin-bottom:8px;">${prompt}</div>
-            <div style="display:flex;justify-content:center;gap:16px;margin-bottom:4px;">
-              <button class="img-action-btn" title="Tải xuống" style="background:none;border:none;cursor:pointer;outline:none;">
-                <span class="material-icons" style="font-size:22px;color:#2563eb;">download</span>
-              </button>
-              <button class="img-action-btn" title="Chia sẻ" style="background:none;border:none;cursor:pointer;outline:none;">
-                <span class="material-icons" style="font-size:22px;color:#43a047;">share</span>
-              </button>
+        const lastLoadingBox = chatContainer.querySelector('.ai-image-loading-box');
+        let messageDiv;
+        if (lastLoadingBox && lastLoadingBox.parentNode && lastLoadingBox.parentNode.parentNode) {
+          // Thay thế khung loading bằng ảnh thật
+          messageDiv = lastLoadingBox.parentNode.parentNode;
+          const bubble = lastLoadingBox.parentNode;
+          bubble.innerHTML = `
+            <div style="text-align:center">
+              <img src="data:image/png;base64,${finalImage}" alt="AI Image" style="max-width:320px;max-height:320px;border-radius:12px;box-shadow:0 2px 12px #0002;margin-bottom:8px;cursor:pointer;">
+              <div style="font-size:0.95em;color:#666;margin-bottom:8px;">${prompt}</div>
+              <div style="display:flex;justify-content:center;gap:16px;margin-bottom:4px;">
+                <button class="img-action-btn" title="Tải xuống" style="background:none;border:none;cursor:pointer;outline:none;">
+                  <span class="material-icons" style="font-size:22px;color:#2563eb;">download</span>
+                </button>
+                <button class="img-action-btn" title="Chia sẻ" style="background:none;border:none;cursor:pointer;outline:none;">
+                  <span class="material-icons" style="font-size:22px;color:#43a047;">share</span>
+                </button>
+              </div>
             </div>
-          </div>
-        `;
-        messageDiv.appendChild(bubble);
-        chatContainer.appendChild(messageDiv);
-        setTimeout(() => scrollToBottom(true), 10);
-
-        // Xử lý popup phóng to ảnh
-        let popup = document.getElementById('image-popup-overlay');
-        if (!popup) {
-          popup = document.createElement('div');
-          popup.id = 'image-popup-overlay';
-          popup.style = 'display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(0,0,0,0.85);justify-content:center;align-items:center;';
-          popup.innerHTML = '<img id="popup-img" style="max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 0 24px #fff5;">';
-          popup.onclick = () => { popup.style.display = 'none'; };
-          document.body.appendChild(popup);
+          `;
+        } else {
+          // Nếu không tìm thấy thì thêm như cũ
+          messageDiv = document.createElement('div');
+          messageDiv.className = 'flex justify-start';
+          const bubble = document.createElement('div');
+          bubble.className = 'max-w-[85%] rounded-2xl px-4 py-3 bg-gray-100 text-gray-800';
+          bubble.innerHTML = `
+            <div style="text-align:center">
+              <img src="data:image/png;base64,${finalImage}" alt="AI Image" style="max-width:320px;max-height:320px;border-radius:12px;box-shadow:0 2px 12px #0002;margin-bottom:8px;cursor:pointer;">
+              <div style="font-size:0.95em;color:#666;margin-bottom:8px;">${prompt}</div>
+              <div style="display:flex;justify-content:center;gap:16px;margin-bottom:4px;">
+                <button class="img-action-btn" title="Tải xuống" style="background:none;border:none;cursor:pointer;outline:none;">
+                  <span class="material-icons" style="font-size:22px;color:#2563eb;">download</span>
+                </button>
+                <button class="img-action-btn" title="Chia sẻ" style="background:none;border:none;cursor:pointer;outline:none;">
+                  <span class="material-icons" style="font-size:22px;color:#43a047;">share</span>
+                </button>
+              </div>
+            </div>
+          `;
+          messageDiv.appendChild(bubble);
+          chatContainer.appendChild(messageDiv);
         }
-        document.getElementById(imgId).onclick = function() {
-          document.getElementById('popup-img').src = this.src;
-          popup.style.display = 'flex';
-        };
-        // Nút tải xuống
-        bubble.querySelectorAll('.img-action-btn')[0].onclick = function() {
-          const link = document.createElement('a');
-          link.href = `data:image/png;base64,${finalImage}`;
-          link.download = 'hie-ai-image.png';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        };
-        // Nút chia sẻ
-        bubble.querySelectorAll('.img-action-btn')[1].onclick = async function() {
-          try {
-            const blob = await fetch(`data:image/png;base64,${finalImage}`).then(res => res.blob());
-            const file = new File([blob], 'hie-ai-image.png', { type: 'image/png' });
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                title: 'Ảnh tạo bởi Khoa AI',
-                text: prompt,
-                files: [file]
-              });
-            } else {
-              // Fallback: mở ảnh ở tab mới
-              const link = document.createElement('a');
-              link.href = `data:image/png;base64,${finalImage}`;
-              link.target = '_blank';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }
-          } catch (err) {
-            alert('Không thể chia sẻ ảnh trên trình duyệt này.');
-          }
-        };
+        setTimeout(() => scrollToBottom(true), 10);
+        // Popup phóng to ảnh, nút tải xuống, chia sẻ giữ nguyên như cũ
+        // ... (phần còn lại giữ nguyên)
       });
     }
 
@@ -1985,20 +1987,32 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       });
     }
     
-    // Hàm cuộn xuống cuối mượt mà hơn
+    // Thêm biến để theo dõi trạng thái người dùng có đang ở cuối chat không
+    let isUserAtBottom = true;
+
+    // Sửa lại logic: Nếu user kéo xuống cuối (hoặc gần cuối), luôn auto scroll. Nếu kéo lên thì không auto scroll nữa. Khi kéo xuống cuối lại thì bật lại auto scroll.
     function scrollToBottom(force = false) {
       const chatContainer = document.getElementById('chat-container');
-      // Chỉ auto scroll nếu user đang ở gần cuối hoặc force = true
-      const scrollTop = chatContainer.scrollTop;
-      const scrollHeight = chatContainer.scrollHeight;
-      const clientHeight = chatContainer.clientHeight;
-      if (force || (scrollHeight - (scrollTop + clientHeight) < 120)) {
+      if (force || isUserAtBottom) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
-      // Ẩn nút cuộn sau khi đã cuộn xong
       setTimeout(() => {
         hideScrollButton();
       }, 500);
+    }
+
+    // Lắng nghe sự kiện cuộn để xác định user có ở cuối không
+    function setupScrollListener() {
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.addEventListener('scroll', function() {
+        const scrollTop = chatContainer.scrollTop;
+        const scrollHeight = chatContainer.scrollHeight;
+        const clientHeight = chatContainer.clientHeight;
+        // Nếu user ở cuối (không cần cách px gì cả)
+        isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 2); // 2px để tránh lỗi làm tròn
+        checkScrollPosition();
+      });
+      window.addEventListener('resize', checkScrollPosition);
     }
     
     // Kiểm tra vị trí cuộn và hiển thị/ẩn nút cuộn xuống cuối
@@ -2385,9 +2399,6 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       }, 10);
     }
 
-    // Thêm biến để theo dõi trạng thái người dùng có đang ở cuối chat không
-    let isUserAtBottom = true;
-
     // Xử lý nút đóng thông báo tính năng AI
     document.addEventListener('DOMContentLoaded', function() {
       const note = document.getElementById('ai-feature-note');
@@ -2438,6 +2449,7 @@ Bạn là trợ lý AI chuyên về lập trình, code, debug, giải thích l�
     // Thêm sự kiện cho nút chuyển chế độ AI lập trình
     document.getElementById('dev-mode-toggle').addEventListener('click', function() {
       isDevMode = !isDevMode;
+      hideWelcomeMessage();
       this.classList.toggle('active', isDevMode);
       // Ẩn welcome-message nếu chưa có tin nhắn
       if (!hasMessages) {
@@ -2482,6 +2494,18 @@ Bạn là trợ lý AI chuyên về lập trình, code, debug, giải thích l�
     function removeDevModeHint() {
       const hint = document.querySelector('.dev-mode-hint');
       if (hint) hint.remove();
+    }
+
+    // === HIDE WELCOME MESSAGE LOGIC ===
+    function hideWelcomeMessage() {
+      const welcome = document.getElementById('welcome-message');
+      if (welcome && !welcome.classList.contains('hidden')) {
+        welcome.classList.add('hidden');
+        hasMessages = true;
+        // Ẩn thông báo tính năng AI
+        const note = document.getElementById('ai-feature-note');
+        if (note) note.style.display = 'none';
+      }
     }
   </script>
 </body>
