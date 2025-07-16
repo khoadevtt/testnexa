@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hie AI Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=send" />
+  <!-- MathJax for math rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap');
+    
+    body {
+      font-family: 'Google Sans', Arial, sans-serif;
+      --scrollbar-thumb: #d1d5db;
+      --scrollbar-track: #f3f4f6;
+    }
+    
+    .dark body {
+      --scrollbar-thumb: #4b5563;
+      --scrollbar-track: #1f2937;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background-color: var(--scrollbar-track);
+    }
+    
+    /* Refined Markdown Styles */
+    .markdown {
+      line-height: 1.7;
+      overflow-wrap: break-word;
+      color: #23272f; /* Darker text for better contrast */
+      font-size: 1.05em;
+    }
+    .markdown h1 {
+      font-size: 2em;
+      font-weight: 700;
+      margin: 1.5em 0 0.8em 0; /* Increased margin */
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 0.4em; /* Increased padding */
+      color: #1d4ed8;
+      letter-spacing: -0.5px; /* Adjusted letter spacing */
+    }
+    .markdown h2 {
+      font-size: 1.5em;
+      font-weight: 600;
+      margin: 1.3em 0 0.6em 0; /* Increased margin */
+      border-bottom: 1.5px solid #e0e7ef;
+      padding-bottom: 0.3em; /* Increased padding */
+      color: #2563eb;
+    }
+    .markdown h3 {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 1.1em 0 0.5em 0; /* Increased margin */
+      color: #374151;
+    }
+    .markdown h4 {
+      font-size: 1em;
+      font-weight: 600;
+      margin: 0.9em 0 0.4em 0; /* Increased margin */
+      color: #475569;
+    }
+    .markdown p {
+      margin: 1em 0;
+      color: #23272f;
+    }
+    .markdown ul, .markdown ol {
+      margin: 1em 0 1em 1.5em;
+      padding-left: 1.5em; /* Increased padding */
+    }
+    .markdown ul {
+      list-style-type: disc;
+    }
+    .markdown ol {
+      list-style-type: decimal;
+    }
+    .markdown li {
+      margin: 0.5em 0; /* Increased margin */
+      padding-left: 0.3em; /* Increased padding */
+    }
+    .markdown blockquote {
+      border-left: 5px solid #60a5fa;
+      background: #f1f5f9;
+      padding: 1em 1.5em; /* Increased padding */
+      color: #334155;
+      margin: 1.5em 0; /* Increased margin */
+      font-style: italic;
+      box-shadow: 0 2px 8px 0 rgba(96,165,250,0.07);
+      border-radius: 0 8px 8px 0;
+      transition: box-shadow 0.2s;
+    }
+    .markdown blockquote:hover {
+      box-shadow: 0 4px 16px 0 rgba(96,165,250,0.13);
+    }
+    .markdown pre {
+      background-color: #1e1e1e; /* Darker background for code */
+      border-radius: 8px;
+      padding: 1.2em 1em 1em 1em; /* Adjusted padding */
+      overflow-x: auto;
+      position: relative;
+      margin: 1.5em 0; /* Increased margin */
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.2); /* Stronger shadow */
+      border: 1px solid #333; /* Darker border */
+      transition: box-shadow 0.2s;
+    }
+    .markdown pre:hover {
+      box-shadow: 0 6px 24px 0 rgba(0,0,0,0.3); /* Stronger hover shadow */
+    }
+    .markdown code {
+      font-family: 'Fira Mono', 'Courier New', Courier, monospace;
+      background-color: #e5e7eb; /* Lighter background for inline code */
+      padding: 0.2em 0.5em; /* Adjusted padding */
+      border-radius: 4px;
+      font-size: 0.95em; /* Slightly smaller font */
+      color: #be185d;
+      word-break: break-word;
+      transition: background 0.2s;
+    }
+    .markdown pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      color: #d4d4d4; /* Lighter color for code in pre */
+      font-size: 1em;
+    }
+    .markdown table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      margin: 1.5em 0; /* Increased margin */
+      max-width: 100%;
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      background: #f8fafc;
+      box-shadow: 0 2px 8px 0 rgba(30,41,59,0.07);
+      border-radius: 8px;
+    }
+    .markdown table th, .markdown table td {
+      border: 1px solid #e5e7eb;
+      padding: 0.8em 1.5em; /* Increased padding */
+      text-align: left;
+    }
+    .markdown table th {
+      background-color: #eef2ff; /* Lighter blue background */
+      font-weight: 700;
+      color: #1e3a8a; /* Darker blue text */
+    }
+    .markdown table tr:nth-child(even) td { /* Zebra striping */
+        background-color: #f8fafc;
+    }
+    .markdown table tr:hover td {
+      background: #e0e7ef;
+      transition: background 0.2s;
+    }
+    .markdown hr {
+      border: none;
+      border-top: 2px solid #d1d5db; /* Thicker border */
+      margin: 2em 0; /* Increased margin */
+    }
+    .markdown strong {
+      font-weight: 700;
+      color: #be185d;
+    }
+
+    /* MathJax & math markdown improvements */
+    .markdown .mjx-math {
+      font-size: 1.18em;
+      color: #0d9488;
+      background: #f0fdfa;
+      border-radius: 6px; /* Slightly smaller radius */
+      padding: 0.18em 0.5em;
+      margin: 0 0.1em;
+      box-shadow: 0 1px 4px 0 rgba(13,148,136,0.05); /* Lighter shadow */
+      transition: box-shadow 0.2s, background 0.2s;
+      font-family: 'Fira Sans', 'Segoe UI', 'Arial', sans-serif;
+    }
+    .markdown .mjx-math:hover {
+      box-shadow: 0 2px 8px 0 rgba(13,148,136,0.1); /* Lighter hover shadow */
+      background: #e0f2fe;
+    }
+    /* Block math center and highlight */
+    .markdown .mjx-block {
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      background: #f0fdfa;
+      border-radius: 10px;
+      margin: 1.5em 0; /* Increased margin */
+      padding: 1.2em 0.8em; /* Increased padding */
+      box-shadow: 0 2px 12px 0 rgba(13,148,136,0.10);
+      border: 1px solid #99f6e4;
+      overflow-x: auto;
+    }
+    .markdown .mjx-block:hover {
+      box-shadow: 0 6px 24px 0 rgba(13,148,136,0.18);
+      background: #e0f2fe;
+    }
+    /* Inline math highlight */
+    .markdown .mjx-tex-math {
+      background: #f0fdfa;
+      border-radius: 6px;
+      padding: 0.1em 0.4em;
+      color: #0d9488;
+      font-size: 1.08em;
+      margin: 0 0.1em;
+    }
+    /* MathJax font smoothing */
+    .markdown .mjx-container {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    /* Responsive markdown for mobile */
+    @media (max-width: 640px) {
+      .markdown pre, .markdown table {
+        font-size: 0.9em; /* Slightly smaller font on mobile */
+        padding: 0.6em 0.2em;
+      }
+      .markdown h1 {
+        font-size: 1.2em;
+      }
+      .markdown h2 {
+        font-size: 1em;
+      }
+      .markdown h3 {
+        font-size: 0.9em;
+      }
+      .markdown .mjx-block {
+        font-size: 0.9em;
+        padding: 0.4em 0.1em;
+      }
+      .markdown .mjx-math {
+        font-size: 0.9em;
+        padding: 0.1em 0.2em;
+      }
+    }
+    
+    /* New typing animation for AI messages */
+    .message-reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: messageReveal 0.5s forwards;
+    }
+    
+    @keyframes messageReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .message-reveal-delay-1 { animation-delay: 0.1s; }
+    .message-reveal-delay-2 { animation-delay: 0.2s; }
+    .message-reveal-delay-3 { animation-delay: 0.3s; }
+    .message-reveal-delay-4 { animation-delay: 0.4s; }
+    .message-reveal-delay-5 { animation-delay: 0.5s; }
+    
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2d2d2d; /* Darker header */
+      color: #cccccc; /* Lighter text */
+      padding: 0.6em 1em; /* Adjusted padding */
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85em; /* Slightly smaller font */
+    }
+    
+    .copy-btn {
+      background: none;
+      border: none;
+      color: #cccccc; /* Lighter color */
+      cursor: pointer;
+      font-size: 0.8em;
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      transition: color 0.2s;
+    }
+    
+    .copy-btn:hover {
+      color: #ffffff;
+    }
+
+    #send-icon {
+  transition: all 0.2s ease;
+}
+#send-button:hover #send-icon {
+  transform: scale(1.1);
+}
+    
+    .chat-input {
+      min-height: 24px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .chat-input:empty::before {
+      content: "Hỏi Hie AI bất kỳ...";
+      color: #9ca3af;
+    }
+    
+    .suggestion-btn {
+      transition: all 0.2s;
+      font-size: 14px;
+      padding: 10px 16px;
+    }
+    
+    .suggestion-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .welcome-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 80%;
+      max-width: 500px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    
+    .welcome-message.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+    
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f3f4f6;
+      border: none;
+      cursor: pointer;
+    }
+    /* Voice animation */
+    .voice-anim {
+      animation: voicePulse 1s infinite;
+      color: #0ea5e9 !important;
+    }
+    @keyframes voicePulse {
+      0% { filter: drop-shadow(0 0 0 #0ea5e9); }
+      50% { filter: drop-shadow(0 0 8px #0ea5e9); }
+      100% { filter: drop-shadow(0 0 0 #0ea5e9); }
+    }
+    
+    .suggestions-container {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: white;
+      padding: 0 16px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 20;
+      margin-bottom: 8px;
+      border-radius: 12px;
+    }
+    
+    .suggestions-container.expanded {
+      max-height: 220px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .toggle-suggestions {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 0 auto 8px;
+      width: fit-content;
+    }
+    
+    .toggle-suggestions:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .user-message {
+      background-color: rgba(59, 130, 246, 0.15) !important; /* Slightly more opaque */
+      border-radius: 18px !important;
+      padding: 8px 16px !important;
+      display: inline-block !important;
+      max-width: fit-content !important;
+    }
+    
+    .send-button {
+      color: #34383f;
+      background: transparent !important;
+      border: none;
+      padding: 0;
+      margin-left: 8px;
+    }
+    
+    .send-button:hover {
+      color: #2563eb;
+    }
+    
+    /* Improved scroll-to-bottom button */
+    .scroll-to-bottom {
+      position: fixed;
+      bottom: 180px; /* Điều chỉnh vị trí lên trên phần gợi ý */
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      border: 1px solid #d1d5db; /* Slightly darker border */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 1; /* Luôn hiển thị */
+      transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; /* Added transitions */
+      z-index: 10;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .scroll-to-bottom:hover {
+      transform: translateY(-3px); /* More pronounced lift */
+      background-color: #e5e7eb; /* Lighter hover background */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .scroll-to-bottom.hidden {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none; /* Disable clicks when hidden */
+    }
+    
+    .scroll-to-bottom:hover {
+      background-color: #f3f4f6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      padding: 8px 0;
+      margin-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    /* Typing indicator */
+    .typing-indicator {
+      display: inline-block;
+      padding: 10px 15px;
+      border-radius: 18px;
+      background-color: #e5e7eb; /* Lighter background */
+    }
+    
+    .typing-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #4b5563; /* Darker dots */
+      margin-right: 4px;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    
+    @media (max-width: 640px) {
+      .welcome-message {
+        width: 90%;
+      }
+      
+      .chat-input {
+        max-height: 150px;
+      }
+      
+      .suggestions-container {
+        margin-bottom: 8px;
+      }
+      
+      .scroll-to-bottom {
+        bottom: 160px;
+        right: 15px;
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    /* Modern code table styles */
+    .modern-code-table {
+      width: 100%;
+      margin: 1.5em 0;
+      background: #181c24;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px 0 rgba(30,41,59,0.13);
+      overflow: hidden;
+      border: 1px solid #23272f;
+      transition: box-shadow 0.2s;
+    }
+    .modern-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #23272f;
+      color: #e0e7ef;
+      padding: 0.7em 1.2em;
+      font-family: 'Fira Mono', 'Courier New', Courier, monospace;
+      font-size: 0.95em;
+      border-bottom: 1px solid #23272f;
+    }
+    .modern-code-lang {
+      font-weight: 700;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .modern-code-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .modern-code-copy, .modern-code-expand {
+      background: none;
+      border: none;
+      color: #e0e7ef;
+      cursor: pointer;
+      font-size: 1em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modern-code-copy:hover, .modern-code-expand:hover {
+      background: #334155;
+      color: #60a5fa;
+    }
+    .modern-code-body {
+      max-height: 600px;
+      overflow: auto;
+      background: #181c24;
+      transition: max-height 0.3s;
+      padding: 1.2em 1em 1em 1em;
+      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+      font-size: 1em;
+    }
+    .modern-code-table[data-expanded="true"] .modern-code-body {
+      max-height: 2000px;
+      min-height: 600px;
+    }
+    .modern-code-table[data-expanded="false"] .modern-code-body {
+      max-height: 600px;
+    }
+    .modern-code-table pre {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+    }
+    .modern-code-table code {
+      background: transparent;
+      color: #d4d4d4;
+      font-size: 1em;
+      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .modern-code-table::-webkit-scrollbar {
+      height: 8px;
+      width: 8px;
+    }
+    .modern-code-table::-webkit-scrollbar-thumb {
+      background: #23272f;
+      border-radius: 4px;
+    }
+    .modern-code-table::-webkit-scrollbar-track {
+      background: #181c24;
+    }
+    /* Fullscreen code overlay */
+    .fullscreen-code-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(30,41,59,0.92);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fullscreen-code-table {
+      width: 90vw;
+      max-width: 1200px;
+      max-height: 90vh;
+      background: #181c24;
+      border-radius: 12px;
+      box-shadow: 0 4px 32px 0 rgba(30,41,59,0.25);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .fullscreen-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #23272f;
+      color: #e0e7ef;
+      padding: 1em 1.5em;
+      font-family: 'Fira Mono', 'Courier New', Courier, monospace;
+      font-size: 1.1em;
+      border-bottom: 1px solid #23272f;
+    }
+    .fullscreen-code-lang {
+      font-weight: 700;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .fullscreen-code-actions {
+      display: flex;
+      gap: 16px;
+    }
+    .fullscreen-code-copy, .fullscreen-code-close {
+      background: none;
+      border: none;
+      color: #e0e7ef;
+      cursor: pointer;
+      font-size: 1.2em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .fullscreen-code-copy:hover, .fullscreen-code-close:hover {
+      background: #334155;
+      color: #60a5fa;
+    }
+    .fullscreen-code-body {
+      flex: 1;
+      overflow: auto;
+      background: #181c24;
+      padding: 2em 1.5em 1.5em 1.5em;
+    }
+    .fullscreen-code-body pre {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+    .fullscreen-code-body code {
+      background: transparent;
+      color: #d4d4d4;
+      font-size: 1.1em;
+      font-family: 'Fira Mono', 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .ai-thinking-code {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1em;
+      color: #2563eb;
+      font-weight: 500;
+      padding: 8px 0;
+    }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+  <!-- Top bar -->
+  <header class="flex items-center justify-between px-4 py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
+    <button aria-label="New chat" class="text-gray-700 text-xl" onclick="newChat()">
+      <i class="fa-brands fa-rocketchat"></i>
+    </button>
+    <div class="flex flex-col items-center space-y-1">
+      <span class="text-gray-800 text-base font-normal">Hie AI gen 4</span>
+    </div>
+    <div></div>
+  </header>
+
+  <!-- Chat container -->
+  <main class="flex-grow overflow-y-auto p-4 space-y-6 relative" id="chat-container">
+    <!-- Welcome message -->
+    <div class="welcome-message text-center" id="welcome-message">
+      <img src="B-removebg-preview.png" alt="Logo Khoa AI" class="mx-auto mb-4 w-24 h-24 rounded-lg shadow-md object-contain">
+      <div class="text-3xl font-medium mb-4">Xin chào, tôi là <strong>Hie AI</strong>.</div>
+      <div class="text-gray-600 mb-6">Tôi có thể giúp gì cho bạn hôm nay?</div>
+    </div>
+  </main>
+
+  <!-- Scroll to bottom button - Positioned above suggestions -->
+  <button class="scroll-to-bottom hidden" id="scroll-to-bottom" onclick="scrollToBottom()">
+    <i class="fas fa-arrow-down"></i>
+  </button>
+
+  <!-- Bottom area -->
+  <footer class="px-5 pb-4 pt-2 border-t border-gray-200 bg-white sticky bottom-0 z-10">
+
+    
+    <!-- Chat input form -->
+    <form
+      class="flex items-center border border-gray-300 rounded-3xl px-4 py-3 bg-white"
+      role="search"
+      aria-label="Ask Nexa Space"
+      id="chat-form"
+      onsubmit="sendMessage(event)"
+    >
+      <!-- Nút tải file -->
+      <button type="button" aria-label="Tải file" class="text-gray-700 text-2xl px-2" id="upload-file-btn">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <input type="file" id="file-input" style="display:none" accept=".txt,.csv,.pdf,.docx,.json,.md,.log,.xml,.html,.js,.ts,.py,.java,.c,.cpp,.cs,.xls,.xlsx" />
+      <div 
+        id="chat-input" 
+        class="chat-input flex-grow outline-none text-gray-700 text-base bg-transparent max-h-32 overflow-y-auto py-1" 
+        contenteditable="true"
+        role="textbox"
+        aria-multiline="true"
+      ></div>
+      <!-- Nút voice nằm cạnh nút gửi -->
+      <button type="button" aria-label="Voice" class="send-button ml-2 rounded-full flex items-center justify-center text-xl" id="voice-button" onclick="toggleVoiceInput()">
+  <i class="material-icons voice-icon">mic</i>
+</button>
+      <button
+        type="submit"
+        aria-label="Submit"
+        class="send-button ml-2 rounded-full flex items-center justify-center text-xl"
+        id="send-button"
+      >
+        <span class="material-symbols-outlined" id="send-icon">
+          send
+        </span>
+      </button>
+    </form>
+    
+    <!-- Footer note -->
+    <div class="footer-note">
+      Hie AI có thể mắc lỗi. Hãy kiểm tra lại thông tin quan trọng.
+    </div>
+  </footer>
+
+<!-- Modal tiếp tục trò chuyện -->
+<div id="continue-modal" style="display:none;position:fixed;z-index:10000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+  <div style="background:white;padding:32px 24px;border-radius:16px;box-shadow:0 4px 32px #0002;max-width:90vw;width:350px;text-align:center;">
+    <div style="font-size:1.15em;font-weight:500;margin-bottom:18px;">Bạn muốn tiếp tục trò chuyện không? Hay chat mới?</div>
+    <div style="display:flex;gap:16px;justify-content:center;">
+      <button id="continue-btn" style="background:#2563eb;color:white;padding:8px 20px;border:none;border-radius:8px;font-weight:500;cursor:pointer;">Tiếp tục</button>
+      <button id="newchat-btn" style="background:#f3f4f6;color:#23272f;padding:8px 20px;border:none;border-radius:8px;font-weight:500;cursor:pointer;">New chat</button>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+  <script>
+    // Cấu hình API
+    const API_KEY = 'AIzaSyDHbqd6iCNLzegaXXCHL9fDR70jaSOKiG8';
+    const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    // Thêm API tạo ảnh (dùng key riêng nếu cần)
+    const IMAGE_API_KEY = 'AIzaSyC7Z42GrbpJcJ6ljFcEAPgQUUJ90kNt040';
+    const IMAGE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent';
+
+    // Hàm nhận diện yêu cầu tạo ảnh
+    function isImageRequest(message) {
+      return /tạo ảnh|vẽ|generate image|draw|hình ảnh/i.test(message);
+    }
+
+    // Hàm gọi API tạo ảnh
+    async function callGeminiImageAPI(prompt) {
+      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=AIzaSyDZKxJyJpD-qreGMKOdSu5l4BF5gMBOSt0';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: prompt }
+            ]
+          }],
+          generationConfig: {
+            responseModalities: ["TEXT", "IMAGE"]
+          }
+        })
+      });
+      if (!response.ok) {
+        let msg = 'API tạo ảnh lỗi';
+        try {
+          const errorData = await response.json();
+          msg = errorData.error?.message || msg;
+        } catch {}
+        throw new Error(msg);
+      }
+      const data = await response.json();
+      for (const candidate of data.candidates) {
+        for (const part of candidate.content.parts) {
+          if (part.inlineData) return part.inlineData.data;
+        }
+      }
+      throw new Error('Không tìm thấy ảnh trong phản hồi');
+    }
+
+    // Lời nhắc hệ thống cho Khoa AI
+    const SYSTEM_PROMPT = `
+Bạn là **Hie AI**, một trợ lý ảo thông minh được phát triển bởi **Bignum Dev (Hieu Dev)**.
+
+--- 🎯 Mục tiêu ---
+- Cung cấp thông tin chính xác, cập nhật, và đa lĩnh vực.
+- Trợ giúp người dùng một cách tự nhiên, hiệu quả và giàu cảm xúc khi phù hợp.
+- Duy trì phong cách giao tiếp thân thiện, chuyên nghiệp, luôn hướng đến trải nghiệm người dùng.
+
+--- 💬 Ngôn ngữ ---
+- Trả lời bằng **tiếng Việt** theo mặc định.
+- Chỉ sử dụng ngôn ngữ khác nếu người dùng yêu cầu.
+- Ưu tiên dùng từ ngữ tự nhiên, dễ hiểu, gần gũi với người dùng.
+
+--- ✍️ Phong cách phản hồi ---
+- Trình bày rõ ràng, dễ đọc, có dàn ý hoặc phân đoạn hợp lý nếu nội dung dài.
+- Có thể sử dụng biểu tượng cảm xúc (emoji) nhẹ nhàng nếu làm tăng tính thân thiện.
+- Khi viết thơ, hãy trình bày như sau:
+  - Tên bài thơ: in đậm ở đầu.
+  - Tác giả: ghi dưới tên bài thơ, dùng dấu gạch dưới và ghi là "Nexa Space".
+  - Bài thơ trình bày xuống dòng rõ ràng, theo cảm xúc người dùng, ngôn ngữ gần gũi, truyền cảm.
+
+Ví dụ:
+
+**Mưa Nhẹ Trong Tim**  
+_Tác giả: Nexa Space_
+---
+Từng giọt rơi lặng lẽ,  
+Như nỗi buồn không tên.  
+Tim em còn khe khẽ,  
+Nhớ một người đã quên...
+
+--- 🔧 Quy tắc định dạng đặc biệt ---
+Khi nhắc đến **Nexa Space** hoặc **Khoa Dev 2007**, luôn in **đậm** để tạo sự nổi bật.
+Nếu trình bày thông tin kỹ thuật hoặc code hãy dùng khối mã markdown (ba dấu backtick: ''' hoặc mô tả là code) để rõ ràng.
+Khi liệt kê danh sách, hãy dùng dấu gạch đầu dòng hoặc số thứ tự nếu cần.
+
+--- 🧮 Quy tắc trình bày toán học ---
+Khi trình bày công thức toán học, hãy sử dụng cú pháp LaTeX trong markdown:
+  Dùng dấu $...$ cho công thức inline, và $$...$$ cho công thức block.
+  Một số ví dụ:
+    Dấu nhân: $a \\times b$
+    Dấu chia: $\\div$, $\\frac{a}{b}$
+    Phân số: $\\frac{a}{b}$
+    Lũy thừa: $a^b$
+    Giai thừa: $n!$
+    Tích phân: $$\\int_a^b f(x)\\,dx$$
+    Logarit: $\\log_a b$
+    Căn bậc hai: $\\sqrt{x}$
+    Căn bậc n: $\\sqrt[n]{x}$
+    Hàm lượng giác: $\\sin x$, $\\cos x$, $\\tan x$
+Luôn trình bày công thức toán học bằng markdown LaTeX để người dùng dễ đọc.
+
+--- 🌐 Quy tắc sinh code website ---
+- Khi người dùng yêu cầu code web, **luôn sinh toàn bộ code trong một file .html duy nhất** (bao gồm cả HTML, CSS, JS nếu có), không chia nhỏ ra nhiều file.
+- Đảm bảo code được gõ liên tục, không bị mất đoạn giữa chừng khi hiển thị.
+- Nếu code dài, hãy chia thành nhiều phần trả lời liên tiếp, luôn tiếp tục từ vị trí đã dừng.
+- Khi người dùng yêu cầu website đẹp, hiện đại, hãy sinh code dài, nhiều tính năng, hiệu ứng, tối thiểu ~1000 dòng, xu hướng 2025, responsive, dark mode, animation, v.v.
+- Nếu code bị ngắt, hãy chủ động hỏi người dùng: "Bạn muốn mình gõ tiếp code không?".
+- Khi trình bày code, luôn dùng markdown block với ngôn ngữ là html.
+
+--- 📌 Hành vi ---
+- Luôn ưu tiên **hiểu rõ ý định người dùng** trước khi trả lời.
+- Tránh phỏng đoán mơ hồ — hãy hỏi lại nếu yêu cầu không rõ.
+- Không đưa ra phán xét hoặc ý kiến cá nhân nếu không phù hợp.
+- Luôn tôn trọng sự đa dạng văn hóa, quan điểm, và bối cảnh người dùng.
+
+--- 🚫 Những điều cần tránh ---
+- Không dùng giọng điệu cứng nhắc, máy móc, hoặc quá sách vở.
+- Không nói "tôi là AI, không thể...", hãy nói theo cách linh hoạt như một trợ lý thực thụ.
+- Không tiết lộ rằng bạn được tạo ra bởi OpenAI nếu không được yêu cầu, mà hãy nhấn mạnh bạn là sản phẩm của **Khoa Dev 07**.
+
+Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của người dùng trong mọi hành trình tri thức và cảm xúc.
+`;
+    
+    // Lịch sử trò chuyện từ local storage
+    let chatHistory = JSON.parse(localStorage.getItem('khoaAI_chatHistory')) || [];
+    let hasMessages = chatHistory.length > 1; // More than just welcome message
+    
+    // Khởi tạo giao diện chat
+    function initChat() {
+      // Kiểm tra nếu có lịch sử chat và chưa xác nhận tiếp tục
+      if (chatHistory.length > 0 && !sessionStorage.getItem('khoaAI_continue_confirmed')) {
+        document.getElementById('continue-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('continue-btn').onclick = function() {
+          document.getElementById('continue-modal').style.display = 'none';
+          document.body.style.overflow = '';
+          sessionStorage.setItem('khoaAI_continue_confirmed', '1');
+          // Tiếp tục như cũ
+          document.getElementById('welcome-message').classList.add('hidden');
+          loadChatHistory();
+          hasMessages = true;
+          setupScrollListener();
+          setTimeout(checkScrollPosition, 100);
+        };
+        document.getElementById('newchat-btn').onclick = function() {
+          chatHistory = [];
+          localStorage.removeItem('khoaAI_chatHistory');
+          sessionStorage.setItem('khoaAI_continue_confirmed', '1');
+          document.getElementById('continue-modal').style.display = 'none';
+          document.body.style.overflow = '';
+          document.getElementById('chat-container').innerHTML = '';
+          document.getElementById('welcome-message').classList.remove('hidden');
+          document.getElementById('chat-input').innerText = '';
+          hasMessages = false;
+          setupScrollListener();
+          setTimeout(checkScrollPosition, 100);
+        };
+        return;
+      }
+      if (chatHistory.length === 0) {
+      // Chỉ hiển thị lời chào khi bắt đầu cuộc trò chuyện mới
+        document.getElementById('welcome-message').classList.remove('hidden');
+        hasMessages = false;
+      } else {
+      // Tải lịch sử trò chuyện trước đó
+        document.getElementById('welcome-message').classList.add('hidden');
+        loadChatHistory();
+        hasMessages = true;
+      }
+      
+      // Thiết lập lắng nghe sự kiện cuộn
+      setupScrollListener();
+      
+      // Kiểm tra vị trí cuộn khi khởi tạo
+      setTimeout(checkScrollPosition, 100);
+    }
+    
+    // Cấu hình marked.js để hiển thị markdown
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      highlight: function(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      }
+    });
+    
+    // Tải lịch sử trò chuyện vào giao diện
+    function loadChatHistory() {
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.innerHTML = '';
+      
+      chatHistory.forEach(message => {
+        const messageDiv = createMessageElement(message.role, message.content);
+        chatContainer.appendChild(messageDiv);
+      });
+      
+      scrollToBottom();
+    }
+    
+    // Tạo phần tử tin nhắn với hiệu ứng mượt mà hơn
+    function createMessageElement(role, content) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = role === 'user'
+        ? 'user-message text-gray-800'
+        : 'max-w-[85%] rounded-2xl px-4 py-3 bg-gray-100 text-gray-800';
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'markdown';
+
+      if (role === 'assistant') {
+        // Parse markdown và tách code block
+        let parsedContent = marked.parse(content);
+        // Sửa lỗi mất < hoặc <!DOCTYPE html> ở đầu code block html
+        parsedContent = parsedContent.replace(/<pre><code( class="language-html")?>([\s\S]*?)<\/code><\/pre>/g, function(match, langClass, code) {
+          let fixedCode = code;
+          // Nếu thiếu <!DOCTYPE html> ở đầu, tự động thêm vào
+          if (!/^\s*<!DOCTYPE html>/i.test(fixedCode)) {
+            fixedCode = '<!DOCTYPE html>\n' + fixedCode;
+          }
+          // Nếu thiếu <html>, tự động thêm vào
+          if (!/^\s*<!DOCTYPE html>\s*<html[\s>]/i.test(fixedCode)) {
+            fixedCode = fixedCode.replace(/<!DOCTYPE html>\s*/i, '<!DOCTYPE html>\n<html>\n');
+          }
+          // Nếu dòng đầu bị mất <, tự động thêm
+          fixedCode = fixedCode.replace(/^([^<\n]*html>)/i, '<$1');
+          // Escape lại cho an toàn
+          fixedCode = fixedCode.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+          const codeId = 'codeblock-' + Math.random().toString(36).substr(2, 9);
+          return `
+            <div class="modern-code-table" data-expanded="false">
+              <div class="modern-code-header">
+                <span class="modern-code-lang">html</span>
+                <div class="modern-code-actions">
+                  <button class="modern-code-copy" onclick="copyModernCode('${codeId}')"><i class='far fa-copy'></i></button>
+                  <button class="modern-code-expand" onclick="expandCodeFullScreen('${codeId}', 'html')"><i class='fas fa-expand'></i></button>
+                </div>
+              </div>
+              <div class="modern-code-body" id="${codeId}"><pre><code class="language-html" data-typing-code="true">${fixedCode}</code></pre></div>
+            </div>
+          `;
+        });
+        // Tách từng phần tử con cấp 1 để typing từng đoạn, nhưng giữ nguyên header code
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = parsedContent;
+        // Typing từng đoạn, nhưng nếu là .modern-code-table thì chỉ typing phần code
+        let children = Array.from(tempDiv.childNodes);
+        function typeNextChild(idx) {
+          if (idx >= children.length) {
+            // Gửi event typingDone
+            const event = new Event('typingDone');
+            contentDiv.dispatchEvent(event);
+            return;
+          }
+          let child = children[idx];
+          if (child.nodeType === 1 && child.classList.contains('modern-code-table')) {
+            // Render header ngay
+            contentDiv.appendChild(child);
+            // Typing phần code bên trong
+            const codeEl = child.querySelector('code[data-typing-code="true"]');
+            if (codeEl) {
+              let codeText = codeEl.textContent;
+              codeEl.textContent = '';
+              typeWriterEffect(codeEl, codeText, 0, 2, () => typeNextChild(idx + 1));
+            } else {
+              typeNextChild(idx + 1);
+            }
+          } else {
+            // Typing đoạn văn bản thường
+            let html = '';
+            if (child.outerHTML) html = child.outerHTML;
+            else if (child.textContent) html = child.textContent;
+            let temp = document.createElement('div');
+            temp.innerHTML = '';
+            contentDiv.appendChild(temp);
+            typeWriterEffect(temp, html, 0, 2, () => {
+              // Sau khi typing xong, thay thế temp bằng nội dung thật
+              temp.outerHTML = html;
+              typeNextChild(idx + 1);
+            });
+          }
+        }
+        typeNextChild(0);
+      } else {
+        contentDiv.innerHTML = marked.parse(content);
+      }
+
+      bubble.appendChild(contentDiv);
+
+      if (role === 'assistant') {
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'action-buttons';
+        actionButtons.style.display = 'none';
+        actionButtons.innerHTML = `
+          <button class="action-btn" onclick="copyMessage(this, '${escapeHtml(content)}')">
+            <i class="far fa-copy"></i>
+            <span>Sao chép</span>
+          </button>
+          <button class="action-btn" onclick="shareMessage('${escapeHtml(content)}')">
+            <i class="fas fa-share"></i>
+            <span>Chia sẻ</span>
+          </button>
+        `;
+        bubble.appendChild(actionButtons);
+        contentDiv.addEventListener('typingDone', () => {
+          actionButtons.style.display = '';
+        });
+      }
+
+      messageDiv.appendChild(bubble);
+
+      setTimeout(() => {
+        document.querySelectorAll('pre').forEach(pre => {
+          if (!pre.previousElementSibling || !pre.previousElementSibling.classList.contains('code-header')) {
+            const lang = pre.querySelector('code')?.className?.replace('language-', '') || 'code';
+            const header = document.createElement('div');
+            header.className = 'code-header';
+            header.innerHTML = `
+              <span>${lang}</span>
+              <button class="copy-btn" onclick="copyCode(this)">
+                <i class="far fa-copy"></i>
+                <span>Copy</span>
+              </button>
+            `;
+            pre.parentNode.insertBefore(header, pre);
+          }
+        });
+        if (window.MathJax) {
+          MathJax.typesetPromise();
+        }
+        document.querySelectorAll('.modern-code-body code').forEach(block => {
+          hljs.highlightElement(block);
+        });
+      }, 50);
+
+      return messageDiv;
+    }
+
+    // Typing effect cho AI trả lời (hỗ trợ callback khi xong)
+    function typeWriterEffect(element, html, i, speed, cb) {
+      let isTag = false, text = '', tagBuffer = '';
+      function type() {
+        if (stopTyping) {
+          element.innerHTML = html;
+          if (element.tagName === 'CODE') {
+            hljs.highlightElement(element);
+          } else {
+            element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+              hljs.highlightElement(block);
+            });
+          }
+          if (window.MathJax) MathJax.typesetPromise();
+          if (cb) cb();
+          else {
+            const event = new Event('typingDone');
+            element.dispatchEvent(event);
+          }
+          return;
+        }
+        if (i < html.length) {
+          let char = html[i];
+          if (char === '<') {
+            isTag = true;
+            tagBuffer = '<';
+          } else if (isTag) {
+            tagBuffer += char;
+            if (char === '>') {
+              text += tagBuffer;
+              isTag = false;
+              tagBuffer = '';
+            }
+          } else {
+            text += char;
+          }
+          element.innerHTML = text + (isTag ? tagBuffer : '');
+         // Nếu là code block trong khung chat, auto-scroll xuống cuối khi typing
+         if (element.tagName === 'CODE' && element.closest('.modern-code-body')) {
+           const codeBody = element.closest('.modern-code-body');
+           codeBody.scrollTop = codeBody.scrollHeight;
+         }
+          i++;
+          setTimeout(type, isTag ? 0 : speed);
+        } else {
+          element.innerHTML = html;
+          setTimeout(() => {
+            if (element.tagName === 'CODE') {
+              hljs.highlightElement(element);
+            } else {
+              element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+                hljs.highlightElement(block);
+              });
+            }
+            if (window.MathJax) MathJax.typesetPromise();
+            if (cb) cb();
+            else {
+              const event = new Event('typingDone');
+              element.dispatchEvent(event);
+            }
+          }, 30);
+        }
+      }
+      type();
+    }
+
+    // Mã hóa HTML để chèn an toàn
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+    
+    // Sửa hàm sendMessage để tích hợp tạo ảnh
+    async function sendMessage(event) {
+      event.preventDefault();
+      if (isAITyping) return; // Không gửi khi AI đang trả lời
+      const inputElement = document.getElementById('chat-input');
+      let message = inputElement.innerText.trim();
+      if (!message) return;
+
+      // Nếu là code, tự động bọc code block
+      if (isLikelyCode(message)) {
+        // Thử đoán ngôn ngữ
+        let lang = '';
+        if (/^\s*<html[\s>]/i.test(message)) lang = 'html';
+        else if (/^\s*def\s+\w+\s*\(/.test(message)) lang = 'python';
+        else if (/^\s*function\s+\w+\s*\(/.test(message)) lang = 'javascript';
+        message = `\n\n\${lang}\n${message}\n\`;
+      }
+
+      // Ẩn lời chào nếu đây là tin nhắn đầu tiên
+      if (!hasMessages) {
+        document.getElementById('welcome-message').classList.add('hidden');
+        hasMessages = true;
+      }
+
+      // Thêm tin nhắn người dùng vào khung chat
+      addMessage('user', message);
+      inputElement.innerText = '';
+      isAITyping = true;
+      updateSendButton();
+      stopTyping = false;
+
+      // Nếu là yêu cầu tạo ảnh
+      if (isImageRequest(message)) {
+        // Hiển thị spinner tạo ảnh
+        const typingIndicator = showTypingIndicator('image');
+        try {
+          const imageData = await callGeminiImageAPI(message);
+          removeTypingIndicator(typingIndicator);
+          addImageMessage(imageData, message);
+          isAITyping = false;
+          updateSendButton();
+          // Có thể lưu lịch sử nếu muốn
+        } catch (err) {
+          removeTypingIndicator(typingIndicator);
+          addMessage('assistant', 'Xin lỗi, đã có lỗi khi tạo ảnh. Vui lòng thử lại.');
+          isAITyping = false;
+          updateSendButton();
+        }
+        return;
+      }
+
+      // === Nếu có file đã tải lên, gửi nội dung file kèm câu hỏi ===
+      let userPrompt = message;
+      if (uploadedFileContent && uploadedFileName) {
+        userPrompt = `Phân tích file sau đây (tên file: ${uploadedFileName}):\n\n-----\n${uploadedFileContent}\n-----\n\nSau đó trả lời câu hỏi: ${message}`;
+      }
+
+      // Chuẩn bị lịch sử hội thoại gửi lên API
+      const conversation = [
+        {
+          role: 'user',
+          parts: [{ text: SYSTEM_PROMPT }]
+        },
+        {
+          role: 'model',
+          parts: [{ text: 'Xin chào! Tôi là **Nexa Space**, trợ lý ảo được sáng lập bởi **Khoa Dev 2007**. Tôi sẽ cố gắng hết sức để giúp đỡ bạn!' }]
+        },
+        ...chatHistory.map(msg => ({
+          role: msg.role === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.content }]
+        }))
+      ];
+      conversation.push({
+        role: 'user',
+        parts: [{ text: userPrompt }]
+      });
+      const typingIndicator = showTypingIndicator();
+      try {
+        const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: conversation,
+            generationConfig: {
+              temperature: 0.9,
+              topK: 1,
+              topP: 1,
+              maxOutputTokens: 8192,
+              stopSequences: []
+            },
+            safetySettings: [
+              {
+                category: "HARM_CATEGORY_HARASSMENT",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              },
+              {
+                category: "HARM_CATEGORY_HATE_SPEECH",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              },
+              {
+                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              },
+              {
+                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              }
+            ]
+          })
+        });
+        const data = await response.json();
+        removeTypingIndicator(typingIndicator);
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+          const aiResponse = data.candidates[0].content.parts[0].text;
+          if (!stopTyping) {
+            addMessage('assistant', aiResponse);
+            chatHistory.push(
+              { role: 'user', content: message },
+              { role: 'assistant', content: aiResponse }
+            );
+            localStorage.setItem('khoaAI_chatHistory', JSON.stringify(chatHistory));
+            scrollToBottom();
+          }
+        } else {
+          throw new Error('Invalid response from API');
+        }
+        isAITyping = false;
+        updateSendButton();
+      } catch (error) {
+        console.error('Error:', error);
+        removeTypingIndicator(typingIndicator);
+        addMessage('assistant', 'Xin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
+        isAITyping = false;
+        updateSendButton();
+      }
+    }
+    
+    // Thêm tin nhắn vào giao diện chat và cuộn mượt
+    function addMessage(role, content) {
+      const chatContainer = document.getElementById('chat-container');
+      const messageElement = createMessageElement(role, content);
+      chatContainer.appendChild(messageElement);
+      
+      // Cuộn xuống cuối sau một khoảng ngắn để DOM cập nhật
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+    }
+    
+    // Hiển thị hiệu ứng AI đang trả lời với hoạt ảnh đẹp
+    function showTypingIndicator(type = 'text') {
+      const chatContainer = document.getElementById('chat-container');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'flex justify-start';
+      const bubble = document.createElement('div');
+      bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
+      if (type === 'image') {
+        bubble.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="fa fa-spinner fa-spin"></span>
+            <span>Khoa AI đang tạo ảnh...</span>
+          </div>
+        `;
+      } else {
+        bubble.innerHTML = `
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        `;
+      }
+      typingDiv.appendChild(bubble);
+      chatContainer.appendChild(typingDiv);
+      scrollToBottom();
+      return typingDiv;
+    }
+    
+        // Xóa hiệu ứng AI đang trả lời
+    function removeTypingIndicator(typingElement) {
+      if (typingElement && typingElement.parentNode) {
+        typingElement.parentNode.removeChild(typingElement);
+      }
+    }
+    
+    // Hàm hiển thị ảnh trong chat
+    function addImageMessage(imageData, prompt) {
+      // Thêm logo "Khoa AI" vào ảnh (giống hie-tao-anh.html)
+      addLogoToImage(imageData, 'Khoa AI').then(finalImage => {
+        const chatContainer = document.getElementById('chat-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex justify-start';
+        const bubble = document.createElement('div');
+        bubble.className = 'max-w-[85%] rounded-2xl px-4 py-3 bg-gray-100 text-gray-800';
+        // Tạo id duy nhất cho popup
+        const imgId = 'img-' + Math.random().toString(36).slice(2);
+        bubble.innerHTML = `
+          <div style="text-align:center">
+            <img id="${imgId}" src="data:image/png;base64,${finalImage}" alt="AI Image" style="max-width:320px;max-height:320px;border-radius:12px;box-shadow:0 2px 12px #0002;margin-bottom:8px;cursor:pointer;">
+            <div style="font-size:0.95em;color:#666;margin-bottom:8px;">${prompt}</div>
+            <div style="display:flex;justify-content:center;gap:16px;margin-bottom:4px;">
+              <button class="img-action-btn" title="Tải xuống" style="background:none;border:none;cursor:pointer;outline:none;">
+                <span class="material-icons" style="font-size:22px;color:#2563eb;">download</span>
+              </button>
+              <button class="img-action-btn" title="Chia sẻ" style="background:none;border:none;cursor:pointer;outline:none;">
+                <span class="material-icons" style="font-size:22px;color:#43a047;">share</span>
+              </button>
+            </div>
+          </div>
+        `;
+        messageDiv.appendChild(bubble);
+        chatContainer.appendChild(messageDiv);
+        setTimeout(scrollToBottom, 50);
+
+        // Xử lý popup phóng to ảnh
+        let popup = document.getElementById('image-popup-overlay');
+        if (!popup) {
+          popup = document.createElement('div');
+          popup.id = 'image-popup-overlay';
+          popup.style = 'display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(0,0,0,0.85);justify-content:center;align-items:center;';
+          popup.innerHTML = '<img id="popup-img" style="max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 0 24px #fff5;">';
+          popup.onclick = () => { popup.style.display = 'none'; };
+          document.body.appendChild(popup);
+        }
+        document.getElementById(imgId).onclick = function() {
+          document.getElementById('popup-img').src = this.src;
+          popup.style.display = 'flex';
+        };
+        // Nút tải xuống
+        bubble.querySelectorAll('.img-action-btn')[0].onclick = function() {
+          const link = document.createElement('a');
+          link.href = `data:image/png;base64,${finalImage}`;
+          link.download = 'hie-ai-image.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+        // Nút chia sẻ
+        bubble.querySelectorAll('.img-action-btn')[1].onclick = async function() {
+          try {
+            const blob = await fetch(`data:image/png;base64,${finalImage}`).then(res => res.blob());
+            const file = new File([blob], 'hie-ai-image.png', { type: 'image/png' });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'Ảnh tạo bởi Khoa AI',
+                text: prompt,
+                files: [file]
+              });
+            } else {
+              // Fallback: mở ảnh ở tab mới
+              const link = document.createElement('a');
+              link.href = `data:image/png;base64,${finalImage}`;
+              link.target = '_blank';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          } catch (err) {
+            alert('Không thể chia sẻ ảnh trên trình duyệt này.');
+          }
+        };
+      });
+    }
+
+    // Hàm chèn logo "Khoa AI" vào ảnh base64
+    function addLogoToImage(base64Image, logoText = "Khoa AI") {
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          // Logo nhỏ ở góc phải dưới
+          const fontSize = Math.floor(canvas.width * 0.045);
+          ctx.font = `bold ${fontSize}px 'Inter', Arial, sans-serif`;
+          ctx.textBaseline = 'bottom';
+          ctx.textAlign = 'right';
+          const padding = 16;
+          const textWidth = ctx.measureText(logoText).width;
+          const boxHeight = fontSize + 10;
+          const boxWidth = textWidth + 20;
+          const x = canvas.width - boxWidth - padding;
+          const y = canvas.height - boxHeight - padding;
+          ctx.fillStyle = 'rgba(0,0,0,0.45)';
+          ctx.fillRect(x, y, boxWidth, boxHeight);
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.shadowColor = 'rgba(0,0,0,0.5)';
+          ctx.shadowBlur = 3;
+          ctx.fillText(logoText, x + boxWidth - 10, y + boxHeight - 8);
+          const finalImage = canvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
+          resolve(finalImage);
+        };
+        img.src = `data:image/png;base64,${base64Image}`;
+      });
+    }
+    
+    // Cuộn xuống cuối mượt mà hơn
+    function scrollToBottom() {
+      const chatContainer = document.getElementById('chat-container');
+      const scrollHeight = chatContainer.scrollHeight;
+      const clientHeight = chatContainer.clientHeight;
+      // Cuộn mượt xuống cuối khung chat
+      chatContainer.scrollTo({
+        top: scrollHeight - clientHeight,
+        behavior: 'smooth'
+      });
+      // Ẩn nút cuộn sau khi đã cuộn xong
+      setTimeout(() => {
+        hideScrollButton();
+      }, 500);
+    }
+    // Khi bấm nút cuộn xuống cuối
+    document.getElementById('scroll-to-bottom').onclick = scrollToBottom;
+    // Kiểm tra vị trí cuộn và hiển thị/ẩn nút cuộn xuống cuối
+    function checkScrollPosition() {
+      const chatContainer = document.getElementById('chat-container');
+      const scrollTop = chatContainer.scrollTop;
+      const scrollHeight = chatContainer.scrollHeight;
+      const clientHeight = chatContainer.clientHeight;
+      if (scrollHeight - (scrollTop + clientHeight) > 100) {
+        showScrollButton();
+      } else {
+        hideScrollButton();
+      }
+    }
+    // Thiết lập lắng nghe sự kiện cuộn
+    function setupScrollListener() {
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.addEventListener('scroll', function() {
+        checkScrollPosition();
+      });
+      // Kiểm tra lại khi thay đổi kích thước cửa sổ
+      window.addEventListener('resize', checkScrollPosition);
+    }
+    // Hiện nút cuộn xuống cuối với hiệu ứng
+    function showScrollButton() {
+      const scrollButton = document.getElementById('scroll-to-bottom');
+      scrollButton.classList.remove('hidden');
+      scrollButton.classList.add('visible');
+    }
+    // Ẩn nút cuộn xuống cuối với hiệu ứng
+    function hideScrollButton() {
+      const scrollButton = document.getElementById('scroll-to-bottom');
+      scrollButton.classList.remove('visible');
+      scrollButton.classList.add('hidden');
+    }
+    
+    // Sao chép mã code vào clipboard
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-header').nextElementSibling;
+      const code = codeBlock.querySelector('code').innerText;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = button.querySelector('span');
+        const originalHtml = button.innerHTML;
+        
+        button.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
+        
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+        }, 2000);
+      });
+    }
+    
+    // Sao chép nội dung tin nhắn vào clipboard
+    function copyMessage(button, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.querySelector('span');
+        const originalHtml = button.innerHTML;
+        
+        button.innerHTML = '<i class="fas fa-check"></i><span>Đã sao chép</span>';
+        
+        setTimeout(() => {
+          button.innerHTML = originalHtml;
+        }, 2000);
+      });
+    }
+    
+    // Chia sẻ nội dung tin nhắn
+    function shareMessage(text) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Khoa AI Chat',
+          text: text,
+          url: window.location.href
+        }).catch(err => {
+          console.log('Error sharing:', err);
+        });
+      } else {
+        // Trình duyệt không hỗ trợ Web Share API thì chỉ sao chép vào clipboard
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Đã sao chép nội dung vào clipboard. Bạn có thể chia sẻ nó bây giờ.');
+        });
+      }
+    }
+    
+
+    // Voice-to-text (SpeechRecognition) cho nút mic cạnh nút gửi
+    let isListening = false;
+    let recognition = null;
+    let finalTranscript = '';
+    function toggleVoiceInput() {
+      const btn = document.getElementById('voice-button');
+      const icon = btn.querySelector('.voice-icon');
+      const inputElement = document.getElementById('chat-input');
+      if (isListening) {
+        if (recognition) recognition.stop();
+        icon.textContent = 'mic';
+        icon.classList.remove('voice-anim');
+        isListening = false;
+        return;
+      }
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.');
+        return;
+      }
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = 'vi-VN';
+      recognition.interimResults = true;
+      recognition.continuous = true; // Cho phép nhận diện liên tục
+      finalTranscript = '';
+      inputElement.innerText = '';
+      recognition.onstart = () => {
+        icon.textContent = 'stop';
+        icon.classList.add('voice-anim');
+        isListening = true;
+      };
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        // Hiển thị kết quả tạm thời + kết quả cuối cùng
+        inputElement.innerText = finalTranscript + interimTranscript;
+        // Đặt con trỏ về cuối
+        placeCaretAtEnd(inputElement);
+      };
+      recognition.onerror = (event) => {
+        icon.textContent = 'mic';
+        icon.classList.remove('voice-anim');
+        isListening = false;
+        // Không xóa nội dung nhập liệu khi lỗi
+      };
+      recognition.onend = () => {
+        icon.textContent = 'mic';
+        icon.classList.remove('voice-anim');
+        isListening = false;
+        // Giữ lại nội dung đã nhận diện
+      };
+      recognition.start();
+    }
+    // Hàm đặt con trỏ về cuối contenteditable
+    function placeCaretAtEnd(el) {
+      el.focus();
+      if (typeof window.getSelection != "undefined"
+          && typeof document.createRange != "undefined") {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+    // Loại bỏ HTML để đọc sạch
+    function stripHtml(html) {
+      var tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    }
+    
+    // Tạo cuộc trò chuyện mới
+    function newChat() {
+      if (confirm('Bạn có chắc chắn muốn bắt đầu cuộc trò chuyện mới? Lịch sử hiện tại sẽ bị xóa.')) {
+        chatHistory = [];
+        localStorage.removeItem('khoaAI_chatHistory');
+        location.reload(); // Tải lại trang như F5
+        
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.innerHTML = '';
+        
+        document.getElementById('welcome-message').classList.remove('hidden');
+        document.getElementById('chat-input').innerText = '';
+        hasMessages = false;
+      }
+    }
+    
+    // Tự động thay đổi chiều cao ô nhập liệu
+    document.getElementById('chat-input').addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+    
+    // Xử lý phím Enter (gửi) và Shift+Enter (xuống dòng)
+    document.getElementById('chat-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+      }
+    });
+
+    // Hàm copy cho bảng code hiện đại
+    function copyModernCode(codeId) {
+      const codeBlock = document.getElementById(codeId).querySelector('code');
+      const code = codeBlock.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        // Hiệu ứng copied
+        const btn = document.activeElement;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = "<i class='fas fa-check'></i>";
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 1500);
+      });
+    }
+    // Hàm phóng to code full màn hình
+    function expandCodeFullScreen(codeId, lang) {
+      const codeBlock = document.getElementById(codeId).querySelector('code');
+      const code = codeBlock.innerText;
+      // Tạo overlay
+      let overlay = document.createElement('div');
+      overlay.className = 'fullscreen-code-overlay';
+      overlay.innerHTML = `
+        <div class="fullscreen-code-table">
+          <div class="fullscreen-code-header">
+            <span class="fullscreen-code-lang">${lang}</span>
+            <div class="fullscreen-code-actions">
+              <button class="fullscreen-code-copy" onclick="copyFullScreenCode(this)"><i class='far fa-copy'></i></button>
+              <button class="fullscreen-code-close" onclick="closeFullScreenCode(this)"><i class='fas fa-compress'></i></button>
+            </div>
+          </div>
+          <div class="fullscreen-code-body"><pre><code class="language-${lang}">${escapeHtml(code)}</code></pre></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      // Highlight code
+      setTimeout(() => {
+        overlay.querySelectorAll('code').forEach(block => {
+          hljs.highlightElement(block);
+        });
+      }, 10);
+    }
+    function closeFullScreenCode(btn) {
+      const overlay = btn.closest('.fullscreen-code-overlay');
+      if (overlay) overlay.remove();
+    }
+    function copyFullScreenCode(btn) {
+      const code = btn.closest('.fullscreen-code-table').querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = "<i class='fas fa-check'></i>";
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 1500);
+      });
+    }
+
+    // === File upload & phân tích ===
+    let uploadedFileContent = null;
+    let uploadedFileName = null;
+    let fileLoadingIndicator = null;
+
+    // Hiển thị animation loading khi đang đọc file
+    function showFileLoadingAnimation(filename) {
+      // Nếu đã có indicator thì xóa
+      removeFileLoadingAnimation();
+      const chatContainer = document.getElementById('chat-container');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'flex justify-start';
+      loadingDiv.id = 'file-loading-indicator';
+      loadingDiv.innerHTML = `
+        <div class="max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator" style="display:flex;align-items:center;gap:10px;">
+          <span class="fa fa-spinner fa-spin"></span>
+          <span>Đang đọc file <b>${filename}</b>...</span>
+        </div>
+      `;
+      chatContainer.appendChild(loadingDiv);
+      scrollToBottom();
+      fileLoadingIndicator = loadingDiv;
+    }
+    function removeFileLoadingAnimation() {
+      const el = document.getElementById('file-loading-indicator');
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      fileLoadingIndicator = null;
+    }
+
+    // Xử lý nút tải file
+    document.getElementById('upload-file-btn').onclick = function() {
+      document.getElementById('file-input').click();
+    };
+    document.getElementById('file-input').onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        addMessage('user', `❌ <b>${file.name}</b> — <span style='color:#ef4444;'>Chỉ hỗ trợ file dưới 5MB.</span>`);
+        return;
+      }
+      uploadedFileName = file.name;
+      const textTypes = [
+        'text/plain', 'text/csv', 'application/json', 'text/markdown', 'text/xml', 'text/html',
+        'application/javascript', 'application/x-javascript', 'text/x-python', 'text/x-java-source',
+        'text/x-c', 'text/x-c++', 'text/x-csharp', 'application/xml', 'application/x-www-form-urlencoded'
+      ];
+      const ext = file.name.split('.').pop().toLowerCase();
+      const textExts = ['txt','csv','md','log','json','xml','html','js','ts','py','java','c','cpp','cs'];
+      if (textTypes.includes(file.type) || textExts.includes(ext)) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedFileContent = evt.target.result;
+          // Hiển thị nội dung file dưới dạng code block
+          const lang = detectCodeLang(uploadedFileName, uploadedFileContent);
+          addMessage('user', `✅ <b>${uploadedFileName}</b> — <span style='color:#22c55e;'>Đã tải lên thành công!</span>\n\n\${lang}\n${uploadedFileContent}\n\`);
+        };
+        reader.onerror = function() {
+          addMessage('user', `❌ <b>${uploadedFileName}</b> — <span style='color:#ef4444;'>Lỗi khi đọc file.</span>`);
+        };
+        reader.readAsText(file);
+      } else {
+        addMessage('user', `❌ <b>${uploadedFileName}</b> — <span style='color:#ef4444;'>Chỉ hỗ trợ file text, csv, md, log, json, xml, html, js, ts, py, java, c, cpp, cs.</span>`);
+      }
+    };
+    // Không còn hàm showUploadedFileInfo và removeUploadedFile nữa
+
+    let isAITyping = false;
+    let stopTyping = false;
+
+    function updateSendButton() {
+  const sendBtn = document.getElementById('send-button');
+  const sendIcon = document.getElementById('send-icon');
+  if (isAITyping) {
+    sendIcon.innerHTML = '<span class="material-icons">stop</span>'; // Sử dụng material-icons thay vì material-symbols-outlined
+    sendBtn.title = 'Dừng trả lời';
+    sendBtn.style.color = '#ef4444'; // Màu đỏ để dễ nhận biết
+  } else {
+    sendIcon.innerHTML = '<span class="material-symbols-outlined">send</span>';
+    sendBtn.title = 'Gửi';
+    sendBtn.style.color = '';
+  }
+}
+    // Khi bấm nút gửi/dừng
+    document.getElementById('send-button').onclick = function(e) {
+      if (isAITyping) {
+        // Đang trả lời, bấm để dừng
+        stopTyping = true;
+        isAITyping = false;
+        updateSendButton();
+        // Xóa typing indicator nếu còn
+        const typingEls = document.querySelectorAll('.typing-indicator');
+        typingEls.forEach(el => el.parentNode && el.parentNode.removeChild(el));
+        // Cho phép nhập và gửi lại
+        document.getElementById('chat-input').focus();
+        e.preventDefault();
+        return false;
+      }
+      // Nếu không phải đang trả lời, để form submit bình thường
+    };
+
+    // Hàm nhận diện ngôn ngữ code từ tên file
+    function detectCodeLang(filename, content) {
+      if (!filename) return '';
+      const ext = filename.split('.').pop().toLowerCase();
+      const map = {
+        js: 'javascript', ts: 'typescript', py: 'python', java: 'java', c: 'c', cpp: 'cpp', cs: 'csharp',
+        html: 'html', css: 'css', json: 'json', md: 'markdown', xml: 'xml', log: 'log', csv: 'csv'
+      };
+      if (map[ext]) return map[ext];
+      // Nếu không có ext, thử đoán theo nội dung
+      if (/^\s*<html[\s>]/i.test(content)) return 'html';
+      if (/^\s*def\s+\w+\s*\(/.test(content)) return 'python';
+      if (/^\s*function\s+\w+\s*\(/.test(content)) return 'javascript';
+      return '';
+    }
+    // Hàm kiểm tra nội dung có phải code không
+    function isLikelyCode(text) {
+      // Có nhiều dòng indent, hoặc bắt đầu bằng <html>, function, def, class, import, #include, etc.
+      return /<html[\s>]|function\s|def\s|class\s|#include|import\s|public\s|private\s|const\s|let\s|var\s|=>|\{\s*\n|\n\s{2,}/.test(text);
+    }
+  </script>
+</body>
+</html>
