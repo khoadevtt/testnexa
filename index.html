@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <title>Hie AI Chat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -1165,7 +1165,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
   <script>
 
-    const API_KEY = 'AIzaSyBvvpkflzu9s-eQQgO6bXoPtjDtSN88jd4';
+    const API_KEY = 'AIzaSyDHbqd6iCNLzegaXXCHL9fDR70jaSOKiG8';
     const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
     const IMAGE_API_KEY = 'AIzaSyC7Z42GrbpJcJ6ljFcEAPgQUUJ90kNt040';
@@ -1801,13 +1801,15 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
           throw new Error('Invalid response from API');
         }
       } catch (error) {
-        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
         removeTypingIndicator(typingIndicator);
         isAIReplying = false;
         updateSendButtonForAI();
         if (error.name === 'AbortError') return;
-        console.error('Error:', error);
-        addMessage('assistant', 'Xin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
+        let errorMsg = '😥 Xin lỗi, đã có lỗi khi xử lý yêu cầu.\n\nBạn hãy thử lại sau, kiểm tra kết nối mạng hoặc gửi lại câu hỏi. Nếu lỗi vẫn tiếp diễn, hãy thử làm mới trang.';
+        if (error && error.message && error.message !== 'Invalid response from API') {
+          errorMsg += `\n\nChi tiết: ${error.message}`;
+        }
+        addMessage('assistant', errorMsg);
       }
     }
     
