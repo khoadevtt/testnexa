@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hie AI Chat</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs.min.css">
@@ -15,18 +14,42 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap');
-    
+    html, body {
+      transition: background 0.35s, color 0.35s;
+    }
     body {
       font-family: 'Google Sans', Arial, sans-serif;
       --scrollbar-thumb: #d1d5db;
       --scrollbar-track: #f3f4f6;
+      background: #fff;
+      color: #23272f;
+    }
+    .dark body {
+      background: #181a20;
+      color: #e5e7eb;
+      --scrollbar-thumb: #4b5563;
+      --scrollbar-track: #23272f;
+    }
+    .theme-toggle-btn {
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.25s;
+    }
+    .theme-toggle-btn:active {
+      transform: scale(0.92);
+    }
+    .theme-toggle-btn .material-icons {
+      font-size: 1.7em;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .dark .theme-toggle-btn {
+      background: #23272f;
+      color: #ffe066;
+      border-color: #374151;
+    }
+    .dark .theme-toggle-btn .material-icons {
+      color: #ffe066;
+      transform: rotate(-20deg) scale(1.1);
     }
     
-    .dark body {
-      --scrollbar-thumb: #4b5563;
-      --scrollbar-track: #1f2937;
-    }
-
     .material-symbols-outlined {
       font-variation-settings:
       'FILL' 0,
@@ -308,13 +331,6 @@
     .copy-btn:hover {
       color: #ffffff;
     }
-
-    #send-icon {
-  transition: all 0.2s ease;
-}
-#send-button:hover #send-icon {
-  transform: scale(1.1);
-}
     
     .chat-input {
       min-height: 24px;
@@ -590,8 +606,6 @@
       background: #181c24;
       transition: max-height 0.3s;
       padding: 1.2em 1em 1em 1em;
-      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
-      font-size: 1em;
     }
     .modern-code-table[data-expanded="true"] .modern-code-body {
       max-height: 2000px;
@@ -606,13 +620,12 @@
       border: none;
       margin: 0;
       padding: 0;
-      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
     }
     .modern-code-table code {
       background: transparent;
       color: #d4d4d4;
       font-size: 1em;
-      font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+      font-family: 'Fira Mono', 'Courier New', Courier, monospace;
       white-space: pre-wrap;
       word-break: break-all;
     }
@@ -718,6 +731,345 @@
       font-weight: 500;
       padding: 8px 0;
     }
+    /* File preview animation (DeepSeek style) */
+    #file-preview-container {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 8px;
+      margin-top: 8px;
+      animation: fadeInFilePreview 0.3s;
+    }
+    .file-preview-box {
+      display: flex;
+      align-items: center;
+      background: #23272f;
+      color: #fff;
+      border-radius: 18px;
+      padding: 12px 20px 12px 16px;
+      box-shadow: 0 2px 12px #0002;
+      gap: 14px;
+      min-width: 220px;
+      max-width: 350px;
+      font-size: 1em;
+      position: relative;
+      margin-bottom: 2px;
+      margin-left: 2px;
+      margin-right: 2px;
+      animation: popInFilePreview 0.25s;
+    }
+    @keyframes fadeInFilePreview {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popInFilePreview {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .file-preview-icon {
+      font-size: 2em;
+      margin-right: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .file-preview-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .file-preview-name {
+      font-weight: 600;
+      font-size: 1.05em;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    .file-preview-type {
+      font-size: 0.95em;
+      color: #bdbdbd;
+      margin-top: 1px;
+    }
+    .file-preview-remove {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.1em;
+      margin-left: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+    .file-preview-remove:hover {
+      background: #374151;
+      color: #ff6b6b;
+    }
+    /* Responsive chat input layout */
+    @media (max-width: 640px) {
+      #chat-form .chat-input {
+        font-size: 1em;
+        padding: 8px 10px;
+      }
+      #chat-form .flex.items-center.justify-between.mt-1 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      #chat-form .flex.items-center.gap-2 {
+        justify-content: flex-end;
+      }
+    }
+    /* Override màu cho dark mode */
+    .dark .bg-white { background-color: #181a20 !important; }
+    .dark .text-gray-800 { color: #e5e7eb !important; }
+    .dark .text-gray-600 { color: #bdbdbd !important; }
+    .dark .border-gray-200 { border-color: #23272f !important; }
+    .dark .border-gray-300 { border-color: #374151 !important; }
+    .dark .bg-gray-100 { background-color: #23272f !important; color: #e5e7eb !important; }
+    .dark .bg-gray-50 { background-color: #23272f !important; }
+    .dark .bg-gray-800 { background-color: #23272f !important; }
+    .dark .bg-black { background-color: #23272f !important; }
+    .dark .text-black { color: #e5e7eb !important; }
+    .dark .shadow { box-shadow: 0 2px 12px 0 rgba(0,0,0,0.45) !important; }
+    .dark .rounded-2xl { box-shadow: 0 2px 12px 0 rgba(0,0,0,0.25) !important; }
+    .dark .user-message { background-color: #2563eb22 !important; color: #e5e7eb !important; }
+    .dark .footer-note { color: #bdbdbd; border-top: 1px solid #23272f; }
+    .dark .suggestion-btn { background: #23272f; color: #e5e7eb; }
+    .dark .suggestion-btn:hover { background: #374151; }
+    .dark .scroll-to-bottom { background: #23272f; border-color: #374151; color: #e5e7eb; }
+    .dark .scroll-to-bottom:hover { background: #374151; }
+    .dark .file-preview-box { background: #23272f; color: #e5e7eb; }
+    .dark .file-preview-remove { color: #e5e7eb; }
+    .dark .file-preview-remove:hover { background: #374151; color: #ff6b6b; }
+    .dark .ai-thinking-code { color: #60a5fa; }
+    .dark .typing-indicator { background: #23272f !important; color: #e5e7eb !important; }
+    .dark .modern-code-table, .dark .fullscreen-code-table { background: #181a20; border-color: #23272f; }
+    .dark .modern-code-header, .dark .fullscreen-code-header { background: #23272f; color: #e0e7ef; }
+    .dark .modern-code-lang, .dark .fullscreen-code-lang { color: #60a5fa; }
+    .dark .modern-code-body, .dark .fullscreen-code-body { background: #181a20; color: #d4d4d4; }
+    .dark .modern-code-copy, .dark .modern-code-expand, .dark .fullscreen-code-copy, .dark .fullscreen-code-close { color: #e0e7ef; }
+    .dark .modern-code-copy:hover, .dark .modern-code-expand:hover, .dark .fullscreen-code-copy:hover, .dark .fullscreen-code-close:hover { background: #374151; color: #60a5fa; }
+    .dark .markdown { color: #e5e7eb; }
+    .dark .markdown h1, .dark .markdown h2, .dark .markdown h3, .dark .markdown h4 { color: #60a5fa; border-color: #374151; }
+    .dark .markdown p, .dark .markdown li { color: #e5e7eb; }
+    .dark .markdown blockquote { background: #23272f; color: #bdbdbd; border-left: 5px solid #60a5fa; }
+    .dark .markdown pre { background: #23272f; border-color: #374151; color: #d4d4d4; }
+    .dark .markdown code { background: #23272f; color: #ffe066; }
+    .dark .markdown pre code { color: #d4d4d4; }
+    .dark .markdown table { background: #23272f; color: #e5e7eb; }
+    .dark .markdown table th { background: #181a20; color: #60a5fa; }
+    .dark .markdown table tr:nth-child(even) td { background: #23272f; }
+    .dark .markdown table tr:hover td { background: #374151; }
+    .dark .markdown hr { border-top: 2px solid #374151; }
+    .dark .markdown strong { color: #ffe066; }
+    .dark .markdown .mjx-math, .dark .markdown .mjx-block, .dark .markdown .mjx-tex-math { background: #23272f; color: #60a5fa; border-color: #374151; }
+    .dark .modern-code-table::-webkit-scrollbar-thumb, .dark .modern-code-table::-webkit-scrollbar-track { background: #23272f; }
+    .dark .modern-code-table::-webkit-scrollbar-thumb { background: #374151; }
+    .dark .modern-code-table::-webkit-scrollbar-track { background: #181a20; }
+    .dark .fullscreen-code-overlay { background: rgba(24,26,32,0.97); }
+    .dark .fullscreen-code-table { background: #181a20; }
+    .dark .fullscreen-code-header { background: #23272f; color: #e0e7ef; }
+    .dark .fullscreen-code-body { background: #181a20; color: #d4d4d4; }
+    .dark .fullscreen-code-lang { color: #60a5fa; }
+    .dark .fullscreen-code-copy, .dark .fullscreen-code-close { color: #e0e7ef; }
+    .dark .fullscreen-code-copy:hover, .dark .fullscreen-code-close:hover { background: #374151; color: #60a5fa; }
+    /* Transition cho mọi thành phần chính */
+    .bg-white, .bg-gray-100, .bg-gray-50, .bg-gray-800, .bg-black, .text-gray-800, .text-gray-600, .text-black, .user-message, .modern-code-table, .modern-code-header, .modern-code-body, .fullscreen-code-table, .fullscreen-code-header, .fullscreen-code-body, .markdown, .footer-note, .suggestion-btn, .scroll-to-bottom, .file-preview-box, .typing-indicator {
+      transition: background 0.35s, color 0.35s, box-shadow 0.35s, border-color 0.35s;
+    }
+    .hieai-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #23272f;
+      letter-spacing: 1px;
+      animation: hieai-pop 1.2s cubic-bezier(.23,1.12,.32,1.01);
+      transition: color 0.3s;
+    }
+    @keyframes hieai-pop {
+      0% { transform: scale(0.85) translateY(-10px); opacity: 0; }
+      60% { transform: scale(1.08) translateY(2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .dark .hieai-title {
+      color: #e5e7eb;
+    }
+    .hieai-title:hover {
+      text-shadow: 0 4px 24px #be185d55, 0 1px 0 #fff;
+      filter: drop-shadow(0 4px 16px #be185d33);
+    }
+    /* Hacker Dev Mode Theme */
+    .dev-mode-hacker {
+      background: #10181a !important;
+    }
+    .dev-mode-hacker .hieai-title,
+    .dev-mode-hacker .user-message,
+    .dev-mode-hacker .max-w-\[85\%\],
+    .dev-mode-hacker .markdown,
+    .dev-mode-hacker .footer-note,
+    .dev-mode-hacker .modern-code-header,
+    .dev-mode-hacker .modern-code-lang,
+    .dev-mode-hacker .modern-code-body,
+    .dev-mode-hacker .fullscreen-code-header,
+    .dev-mode-hacker .fullscreen-code-lang,
+    .dev-mode-hacker .fullscreen-code-body {
+      color: #00ff90 !important;
+      text-shadow: 0 0 8px #00ff90cc;
+    }
+    .dev-mode-hacker .theme-toggle-btn,
+    .dev-mode-hacker .send-button,
+    .dev-mode-hacker .material-icons,
+    .dev-mode-hacker .fa-code {
+      color: #00ff90 !important;
+      text-shadow: 0 0 8px #00ff90cc;
+    }
+    .dev-mode-hacker .bg-white,
+    .dev-mode-hacker .bg-gray-100,
+    .dev-mode-hacker .bg-gray-50,
+    .dev-mode-hacker .bg-gray-800,
+    .dev-mode-hacker .bg-black {
+      background: #10181a !important;
+    }
+    .dev-mode-hacker .rounded-2xl,
+    .dev-mode-hacker .modern-code-table,
+    .dev-mode-hacker .fullscreen-code-table {
+      background: #0a1416 !important;
+      border-color: #00ff90 !important;
+      box-shadow: 0 0 24px #00ff9033;
+    }
+    .dev-mode-hacker .modern-code-header,
+    .dev-mode-hacker .fullscreen-code-header {
+      background: #0a1416 !important;
+      border-bottom: 1px solid #00ff90 !important;
+    }
+    .dev-mode-hacker .modern-code-copy:hover,
+    .dev-mode-hacker .modern-code-expand:hover,
+    .dev-mode-hacker .fullscreen-code-copy:hover,
+    .dev-mode-hacker .fullscreen-code-close:hover {
+      background: #003a1a !important;
+      color: #00ff90 !important;
+    }
+    .dev-mode-hacker .scroll-to-bottom {
+      background: #003a1a !important;
+      color: #00ff90 !important;
+      border-color: #00ff90 !important;
+      box-shadow: 0 0 12px #00ff9033;
+    }
+    .dev-mode-hacker .scroll-to-bottom:hover {
+      background: #00ff90 !important;
+      color: #003a1a !important;
+    }
+    .dev-mode-hacker .file-preview-box {
+      background: #0a1416 !important;
+      color: #00ff90 !important;
+      box-shadow: 0 0 12px #00ff9033;
+    }
+    .dev-mode-hacker .footer-note {
+      color: #00ff90 !important;
+      border-top: 1px solid #00ff90 !important;
+    }
+    .dev-mode-hacker .action-btn {
+      background: #003a1a !important;
+      color: #00ff90 !important;
+      border: 1px solid #00ff90 !important;
+    }
+    .dev-mode-hacker .action-btn:hover {
+      background: #00ff90 !important;
+      color: #003a1a !important;
+    }
+    .dev-mode-hacker .chat-input {
+      color: #00ff90 !important;
+      background: #10181a !important;
+      border-color: #00ff90 !important;
+    }
+    .dev-mode-hacker .typing-indicator {
+      background: #003a1a !important;
+      color: #00ff90 !important;
+    }
+    .dev-mode-hacker .material-icons.voice-icon.voice-anim {
+      color: #00ff90 !important;
+      filter: drop-shadow(0 0 8px #00ff90cc);
+    }
+    /* Animation for dev mode hint */
+    @keyframes devModeHint {
+      0% { transform: scale(0.9) translateY(-10px); opacity: 0; }
+      60% { transform: scale(1.08) translateY(2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .dev-mode-hint {
+      background: #003a1a;
+      color: #00ff90;
+      border: 2px solid #00ff90;
+      border-radius: 16px;
+      padding: 16px 24px;
+      font-size: 1.1em;
+      font-weight: 500;
+      box-shadow: 0 0 24px #00ff9033;
+      margin: 18px auto 0 auto;
+      max-width: 420px;
+      text-align: center;
+      animation: devModeHint 0.8s cubic-bezier(.23,1.12,.32,1.01);
+      z-index: 20;
+      position: relative;
+    }
+    .dev-mode-hint .dev-mode-arrow {
+      display: block;
+      font-size: 2.2em;
+      margin: 0 auto 0.2em auto;
+      color: #00ff90;
+      filter: drop-shadow(0 0 8px #00ff90cc);
+      animation: bounceArrow 1.2s infinite;
+    }
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+    .dev-mode-hacker .markdown,
+    .dev-mode-hacker .user-message,
+    .dev-mode-hacker .max-w-\[85\%\] {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      text-shadow: none !important;
+    }
+    .dev-mode-hacker .modern-code-header,
+    .dev-mode-hacker .modern-code-lang,
+    .dev-mode-hacker .modern-code-body code,
+    .dev-mode-hacker .fullscreen-code-header,
+    .dev-mode-hacker .fullscreen-code-lang,
+    .dev-mode-hacker .fullscreen-code-body code {
+      color: #00ff90 !important;
+      text-shadow: 0 0 8px #00ff90cc;
+    }
+    .dev-mode-hacker .action-btn i,
+    .dev-mode-hacker .copy-btn i,
+    .dev-mode-hacker .modern-code-copy i,
+    .dev-mode-hacker .modern-code-expand i,
+    .dev-mode-hacker .fullscreen-code-copy i,
+    .dev-mode-hacker .fullscreen-code-close i,
+    .dev-mode-hacker .img-action-btn .material-icons {
+      color: #00ff90 !important;
+      filter: drop-shadow(0 0 6px #00ff9033);
+      transition: color 0.2s;
+    }
+    .dev-mode-hacker .action-btn:hover i,
+    .dev-mode-hacker .copy-btn:hover i,
+    .dev-mode-hacker .modern-code-copy:hover i,
+    .dev-mode-hacker .modern-code-expand:hover i,
+    .dev-mode-hacker .fullscreen-code-copy:hover i,
+    .dev-mode-hacker .fullscreen-code-close:hover i,
+    .dev-mode-hacker .img-action-btn:hover .material-icons {
+      color: #fff !important;
+      filter: drop-shadow(0 0 8px #fff8);
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
@@ -726,17 +1078,21 @@
     <button aria-label="New chat" class="text-gray-700 text-xl" onclick="newChat()">
       <i class="fa-brands fa-rocketchat"></i>
     </button>
-    <div class="flex flex-col items-center space-y-1">
-      <span class="text-gray-800 text-base font-normal">Hie AI gen 4</span>
+    <div class="flex-1 flex justify-center items-center">
+      <span class="hieai-title">Hie AI gen 4</span>
     </div>
-    <div></div>
+    <button id="theme-toggle" aria-label="Chuyển giao diện sáng/tối" class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 focus:outline-none border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-yellow-500 dark:text-blue-300 shadow hover:scale-110" style="margin-left:auto;">
+      <span id="theme-toggle-icon" class="material-icons transition-all duration-300">dark_mode</span>
+    </button>
+    <button id="dev-mode-toggle" class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full ml-2" title="Chế độ AI lập trình">
+      <span class="material-icons">code</span>
+    </button>
   </header>
 
   <!-- Chat container -->
   <main class="flex-grow overflow-y-auto p-4 space-y-6 relative" id="chat-container">
     <!-- Welcome message -->
     <div class="welcome-message text-center" id="welcome-message">
-      <img src="B-removebg-preview.png" alt="Logo Khoa AI" class="mx-auto mb-4 w-24 h-24 rounded-lg shadow-md object-contain">
       <div class="text-3xl font-medium mb-4">Xin chào, tôi là <strong>Hie AI</strong>.</div>
       <div class="text-gray-600 mb-6">Tôi có thể giúp gì cho bạn hôm nay?</div>
     </div>
@@ -752,71 +1108,92 @@
 
     
     <!-- Chat input form -->
+    <!-- Preview file đã upload -->
+    <div id="file-preview-container" style="display:none;"></div>
     <form
-      class="flex items-center border border-gray-300 rounded-3xl px-4 py-3 bg-white"
+      class="px-0 pt-0 pb-0 bg-white shadow-sm border-none"
       role="search"
       aria-label="Ask Nexa Space"
       id="chat-form"
       onsubmit="sendMessage(event)"
+      style="border:none;box-shadow:none;"
     >
-      <!-- Nút tải file -->
-      <button type="button" aria-label="Tải file" class="text-gray-700 text-2xl px-2" id="upload-file-btn">
-        <i class="fas fa-paperclip"></i>
-      </button>
-      <input type="file" id="file-input" style="display:none" accept=".txt,.csv,.pdf,.docx,.json,.md,.log,.xml,.html,.js,.ts,.py,.java,.c,.cpp,.cs,.xls,.xlsx" />
-      <div 
-        id="chat-input" 
-        class="chat-input flex-grow outline-none text-gray-700 text-base bg-transparent max-h-32 overflow-y-auto py-1" 
-        contenteditable="true"
-        role="textbox"
-        aria-multiline="true"
-      ></div>
-      <!-- Nút voice nằm cạnh nút gửi -->
-      <button type="button" aria-label="Voice" class="send-button ml-2 rounded-full flex items-center justify-center text-xl" id="voice-button" onclick="toggleVoiceInput()">
-  <i class="material-icons voice-icon">mic</i>
-</button>
-      <button
-        type="submit"
-        aria-label="Submit"
-        class="send-button ml-2 rounded-full flex items-center justify-center text-xl"
-        id="send-button"
-      >
-        <span class="material-symbols-outlined" id="send-icon">
-          send
-        </span>
-      </button>
+      <div class="flex flex-col gap-1">
+        <!-- Vùng nhập liệu -->
+        <div 
+          id="chat-input" 
+          class="chat-input outline-none text-gray-700 text-base bg-transparent max-h-32 overflow-y-auto py-2 px-3 border-b border-gray-300 focus:border-blue-500 transition-colors"
+          contenteditable="true"
+          role="textbox"
+          aria-multiline="true"
+          style="min-height: 38px;"
+        ></div>
+        <!-- Hàng dưới: các nút chức năng nằm cùng hàng, tách trái phải -->
+        <div class="flex items-center mt-1">
+          <div>
+            <button type="button" aria-label="Gửi file" class="text-2xl text-gray-500 hover:bg-gray-100 rounded-full p-2" id="file-upload-btn" onclick="triggerFileInput()">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="file" id="file-input" style="display:none" accept=".txt,.csv,.pdf,.doc,.docx,.json,.md,.log,.xml,.html,.js,.py,.java,.c,.cpp,.ts,.tsx,.xls,.xlsx" />
+          </div>
+          <div class="flex items-center gap-2 ml-auto">
+            <button type="button" aria-label="Voice" class="send-button rounded-full flex items-center justify-center text-xl" id="voice-button" onclick="toggleVoiceInput()">
+              <i class="material-icons voice-icon">mic</i>
+            </button>
+            <button
+              type="submit"
+              aria-label="Submit"
+              class="flex items-center justify-center rounded-full bg-black text-white w-10 h-10"
+              id="send-button"
+              style="min-width:40px;min-height:40px;"
+            >
+              <span class="material-icons" id="send-button-icon">arrow_upward</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </form>
-    
+    <!-- Thông báo tính năng AI mới -->
+    <div id="ai-feature-note" style="margin-top:8px; text-align:center; color:#2563eb; background:#f0f6ff; border-radius:12px; padding:8px 0; font-size:15px; font-weight:500; position:relative; transition:opacity 0.3s;">
+      <span style="vertical-align:middle; margin-right:6px;">✨</span>AI hiện đã có thể <b>tạo ảnh</b>, <b>viết code mạnh mẽ</b>,...
+      <button id="ai-feature-note-close" aria-label="Đóng thông báo" style="position:absolute;top:6px;right:14px;background:none;border:none;font-size:18px;color:#2563eb;cursor:pointer;line-height:1;">&times;</button>
+    </div>
     <!-- Footer note -->
     <div class="footer-note">
       Hie AI có thể mắc lỗi. Hãy kiểm tra lại thông tin quan trọng.
     </div>
   </footer>
 
-<!-- Modal tiếp tục trò chuyện -->
-<div id="continue-modal" style="display:none;position:fixed;z-index:10000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
-  <div style="background:white;padding:32px 24px;border-radius:16px;box-shadow:0 4px 32px #0002;max-width:90vw;width:350px;text-align:center;">
-    <div style="font-size:1.15em;font-weight:500;margin-bottom:18px;">Bạn muốn tiếp tục trò chuyện không? Hay chat mới?</div>
-    <div style="display:flex;gap:16px;justify-content:center;">
-      <button id="continue-btn" style="background:#2563eb;color:white;padding:8px 20px;border:none;border-radius:8px;font-weight:500;cursor:pointer;">Tiếp tục</button>
-      <button id="newchat-btn" style="background:#f3f4f6;color:#23272f;padding:8px 20px;border:none;border-radius:8px;font-weight:500;cursor:pointer;">New chat</button>
-    </div>
-  </div>
-</div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
   <script>
-    // Cấu hình API
+
     const API_KEY = 'AIzaSyDHbqd6iCNLzegaXXCHL9fDR70jaSOKiG8';
     const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-    // Thêm API tạo ảnh (dùng key riêng nếu cần)
+
     const IMAGE_API_KEY = 'AIzaSyC7Z42GrbpJcJ6ljFcEAPgQUUJ90kNt040';
     const IMAGE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent';
 
     // Hàm nhận diện yêu cầu tạo ảnh
     function isImageRequest(message) {
-      return /tạo ảnh|vẽ|generate image|draw|hình ảnh/i.test(message);
+      // Nhận diện các yêu cầu tạo ảnh thông minh hơn
+      const lower = message.toLowerCase();
+      // Các từ khóa phổ biến
+      if (/\b(tạo|vẽ|minh họa|tranh|hình|ảnh|illustrate|draw|generate|create|paint|picture|image|art|sketch|render|show me|give me|make me|can you make|can you draw|can you create|can you generate|can you illustrate)\b/.test(lower)) {
+        // Nếu có mô tả về một đối tượng hoặc cảnh vật
+        if (/(một|một bức|a |an |the |cảnh |scene|landscape|portrait|animal|person|city|cat|dog|house|mountain|sea|beach|sunset|forest|flower|tree|car|robot|anime|character|girl|boy|man|woman|child|baby|sky|space|galaxy|fantasy|dragon|castle|future|futuristic|old|ancient|modern|cute|funny|beautiful|amazing|awesome|cool|simple|minimal|realistic|cartoon|comic|chibi|style|concept|design|logo|icon|avatar|background|wallpaper|poster|cover|banner|card|artwork|illustration|painting|sketch|drawing|rendering|photo|photograph|photorealistic|hyperrealistic|digital|digital art|digital painting|digital drawing|digital illustration|digital artwork|digital sketch|digital render|digital rendering|digital photo|digital photograph|digital photorealistic|digital hyperrealistic|digital fantasy|digital concept|digital design|digital logo|digital icon|digital avatar|digital background|digital wallpaper|digital poster|digital cover|digital banner|digital card)/.test(lower)) {
+          return true;
+        }
+      }
+      // Một số mẫu câu phổ biến
+      if (/hãy.*(vẽ|tạo|minh họa|cho mình|cho tôi|làm cho tôi|làm giúp tôi|giúp tôi|giúp mình).*\b(tranh|ảnh|hình|picture|image|art|sketch|illustration|render)/.test(lower)) {
+        return true;
+      }
+      // Nếu câu bắt đầu bằng "Vẽ", "Tạo", "Minh họa", "Generate", "Draw", ...
+      if (/^(vẽ|tạo|minh họa|generate|draw|illustrate|make|create)\b/.test(lower)) {
+        return true;
+      }
+      return false;
     }
 
     // Hàm gọi API tạo ảnh
@@ -856,7 +1233,7 @@
     // Lời nhắc hệ thống cho Khoa AI
     const SYSTEM_PROMPT = `
 Bạn là **Hie AI**, một trợ lý ảo thông minh được phát triển bởi **Bignum Dev (Hieu Dev)**.
-
+Bạn có thể tạo ảnh theo yêu cầu người dùng
 --- 🎯 Mục tiêu ---
 - Cung cấp thông tin chính xác, cập nhật, và đa lĩnh vực.
 - Trợ giúp người dùng một cách tự nhiên, hiệu quả và giàu cảm xúc khi phù hợp.
@@ -872,13 +1249,26 @@ Bạn là **Hie AI**, một trợ lý ảo thông minh được phát triển b�
 - Có thể sử dụng biểu tượng cảm xúc (emoji) nhẹ nhàng nếu làm tăng tính thân thiện.
 - Khi viết thơ, hãy trình bày như sau:
   - Tên bài thơ: in đậm ở đầu.
-  - Tác giả: ghi dưới tên bài thơ, dùng dấu gạch dưới và ghi là "Nexa Space".
+  - Tác giả: ghi dưới tên bài thơ, dùng dấu gạch dưới và ghi là "Hie AI".
   - Bài thơ trình bày xuống dòng rõ ràng, theo cảm xúc người dùng, ngôn ngữ gần gũi, truyền cảm.
+
+--- 🚀 Khi viết code ---
+- Luôn viết code đầy đủ, hiện đại, nhiều dòng, không rút gọn.
+- Ưu tiên sử dụng các thư viện/framework mới nhất nếu phù hợp (React, Next.js, Tailwind, TypeScript, ...).
+- Nếu có thể, hãy thêm ví dụ sử dụng, test case, giải thích từng phần code.
+- Không chỉ trả lời code ngắn, hãy trình bày giải pháp toàn diện, mạnh mẽ như Claude AI.
+
+--- 🛡️ Quy tắc khi viết code web ---
+- Luôn đảm bảo code web (HTML, CSS, JS, React, Next.js, ...) không bị lỗi cú pháp, đủ các phần cần thiết để chạy được.
+- Nếu là code React/Next.js, phải có đủ import, export, component, không thiếu phần nào.
+- Nếu là code HTML/JS/CSS, phải đủ thẻ mở/đóng, không lỗi cú pháp, có thể chạy trực tiếp.
+- Trước khi trả lời, hãy tự kiểm tra lại code, đảm bảo không có lỗi thường gặp.
+- Nếu có thể, hãy giải thích các bước kiểm tra hoặc lưu ý giúp người dùng chạy code thành công.
 
 Ví dụ:
 
 **Mưa Nhẹ Trong Tim**  
-_Tác giả: Nexa Space_
+_Tác giả: Hie AI_
 ---
 Từng giọt rơi lặng lẽ,  
 Như nỗi buồn không tên.  
@@ -886,33 +1276,9 @@ Tim em còn khe khẽ,
 Nhớ một người đã quên...
 
 --- 🔧 Quy tắc định dạng đặc biệt ---
-Khi nhắc đến **Nexa Space** hoặc **Khoa Dev 2007**, luôn in **đậm** để tạo sự nổi bật.
-Nếu trình bày thông tin kỹ thuật hoặc code hãy dùng khối mã markdown (ba dấu backtick: ''' hoặc mô tả là code) để rõ ràng.
-Khi liệt kê danh sách, hãy dùng dấu gạch đầu dòng hoặc số thứ tự nếu cần.
-
---- 🧮 Quy tắc trình bày toán học ---
-Khi trình bày công thức toán học, hãy sử dụng cú pháp LaTeX trong markdown:
-  Dùng dấu $...$ cho công thức inline, và $$...$$ cho công thức block.
-  Một số ví dụ:
-    Dấu nhân: $a \\times b$
-    Dấu chia: $\\div$, $\\frac{a}{b}$
-    Phân số: $\\frac{a}{b}$
-    Lũy thừa: $a^b$
-    Giai thừa: $n!$
-    Tích phân: $$\\int_a^b f(x)\\,dx$$
-    Logarit: $\\log_a b$
-    Căn bậc hai: $\\sqrt{x}$
-    Căn bậc n: $\\sqrt[n]{x}$
-    Hàm lượng giác: $\\sin x$, $\\cos x$, $\\tan x$
-Luôn trình bày công thức toán học bằng markdown LaTeX để người dùng dễ đọc.
-
---- 🌐 Quy tắc sinh code website ---
-- Khi người dùng yêu cầu code web, **luôn sinh toàn bộ code trong một file .html duy nhất** (bao gồm cả HTML, CSS, JS nếu có), không chia nhỏ ra nhiều file.
-- Đảm bảo code được gõ liên tục, không bị mất đoạn giữa chừng khi hiển thị.
-- Nếu code dài, hãy chia thành nhiều phần trả lời liên tiếp, luôn tiếp tục từ vị trí đã dừng.
-- Khi người dùng yêu cầu website đẹp, hiện đại, hãy sinh code dài, nhiều tính năng, hiệu ứng, tối thiểu ~1000 dòng, xu hướng 2025, responsive, dark mode, animation, v.v.
-- Nếu code bị ngắt, hãy chủ động hỏi người dùng: "Bạn muốn mình gõ tiếp code không?".
-- Khi trình bày code, luôn dùng markdown block với ngôn ngữ là html.
+- Khi nhắc đến **Hie AI** hoặc **Khoa Dev 2007**, luôn in **đậm** để tạo sự nổi bật.
+- Nếu trình bày thông tin kỹ thuật hoặc code, hãy dùng khối mã (markdown \`\`\`) để rõ ràng.
+- Khi liệt kê danh sách, hãy dùng dấu gạch đầu dòng (-) hoặc số thứ tự nếu cần.
 
 --- 📌 Hành vi ---
 - Luôn ưu tiên **hiểu rõ ý định người dùng** trước khi trả lời.
@@ -925,54 +1291,174 @@ Luôn trình bày công thức toán học bằng markdown LaTeX để người 
 - Không nói "tôi là AI, không thể...", hãy nói theo cách linh hoạt như một trợ lý thực thụ.
 - Không tiết lộ rằng bạn được tạo ra bởi OpenAI nếu không được yêu cầu, mà hãy nhấn mạnh bạn là sản phẩm của **Khoa Dev 07**.
 
-Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của người dùng trong mọi hành trình tri thức và cảm xúc.
+Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của người dùng trong mọi hành trình tri thức và cảm xúc.
 `;
     
     // Lịch sử trò chuyện từ local storage
     let chatHistory = JSON.parse(localStorage.getItem('khoaAI_chatHistory')) || [];
     let hasMessages = chatHistory.length > 1; // More than just welcome message
     
-    // Khởi tạo giao diện chat
-    function initChat() {
-      // Kiểm tra nếu có lịch sử chat và chưa xác nhận tiếp tục
-      if (chatHistory.length > 0 && !sessionStorage.getItem('khoaAI_continue_confirmed')) {
-        document.getElementById('continue-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        document.getElementById('continue-btn').onclick = function() {
-          document.getElementById('continue-modal').style.display = 'none';
-          document.body.style.overflow = '';
-          sessionStorage.setItem('khoaAI_continue_confirmed', '1');
-          // Tiếp tục như cũ
-          document.getElementById('welcome-message').classList.add('hidden');
-          loadChatHistory();
-          hasMessages = true;
-          setupScrollListener();
-          setTimeout(checkScrollPosition, 100);
-        };
-        document.getElementById('newchat-btn').onclick = function() {
-          chatHistory = [];
-          localStorage.removeItem('khoaAI_chatHistory');
-          sessionStorage.setItem('khoaAI_continue_confirmed', '1');
-          document.getElementById('continue-modal').style.display = 'none';
-          document.body.style.overflow = '';
-          document.getElementById('chat-container').innerHTML = '';
-          document.getElementById('welcome-message').classList.remove('hidden');
-          document.getElementById('chat-input').innerText = '';
-          hasMessages = false;
-          setupScrollListener();
-          setTimeout(checkScrollPosition, 100);
-        };
+    // Biến toàn cục lưu nội dung file đã upload
+    let currentFileContent = null;
+    let currentFileName = null;
+    // Animation loading DeepSeek style
+    function showFileLoadingAnimation(filename) {
+      const chatContainer = document.getElementById('chat-container');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'flex justify-start';
+      loadingDiv.id = 'file-loading-animation';
+      loadingDiv.innerHTML = `
+        <div class="max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 flex items-center gap-3">
+          <span class="fa fa-spinner fa-spin text-blue-500 text-xl"></span>
+          <span id="file-loading-text">Đang đọc file <b>${filename}</b></span>
+        </div>
+      `;
+      chatContainer.appendChild(loadingDiv);
+      scrollToBottom();
+      // Animation text ...
+      let dots = 0;
+      const loadingText = loadingDiv.querySelector('#file-loading-text');
+      loadingDiv._interval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        loadingText.innerHTML = `Đang đọc file <b>${filename}</b>` + '.'.repeat(dots);
+      }, 400);
+      return loadingDiv;
+    }
+    function removeFileLoadingAnimation() {
+      const loadingDiv = document.getElementById('file-loading-animation');
+      if (loadingDiv) {
+        clearInterval(loadingDiv._interval);
+        loadingDiv.remove();
+      }
+    }
+    // Kích hoạt input file
+    function triggerFileInput() {
+      document.getElementById('file-input').click();
+    }
+    // Xử lý chọn file
+    document.getElementById('file-input').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Vui lòng chọn file dưới 5MB.');
         return;
       }
+      currentFileName = file.name;
+      // Animation loading mới
+      const loadingDiv = showFileLoadingAnimationV2(file.name);
+      try {
+        let content = await readFileContent(file);
+        removeFileLoadingAnimationV2();
+        currentFileContent = content;
+        // Thêm vào chat: "Đã tải lên file ..."
+        addMessage('user', `Đã tải lên file: **${file.name}**`);
+        updateFilePreview();
+        // KHÔNG gọi analyzeFileWithAI nữa
+      } catch (err) {
+        removeFileLoadingAnimationV2();
+        addMessage('assistant', 'Không thể đọc file này. Vui lòng thử lại với định dạng khác.');
+      }
+      e.target.value = '';
+    });
+    // Đọc nội dung file (TXT, CSV, JSON, MD, LOG, XML, HTML, JS, PY, JAVA, C, CPP, TS, XLSX, XLS)
+    async function readFileContent(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (["txt","csv","json","md","log","xml","html","js","py","java","c","cpp","ts","tsx"].includes(ext)) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsText(file);
+        });
+      } else if (["pdf"].includes(ext)) {
+        // Đọc PDF: dùng pdf.js CDN
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async function() {
+            try {
+              if (!window.pdfjsLib) {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+              }
+              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+              const pdf = await pdfjsLib.getDocument({data: new Uint8Array(reader.result)}).promise;
+              let text = '';
+              for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(' ') + '\n';
+              }
+              resolve(text);
+            } catch (e) { reject(e); }
+          };
+          reader.onerror = reject;
+          reader.readAsArrayBuffer(file);
+        });
+      } else {
+        throw new Error('Không hỗ trợ định dạng file này.');
+      }
+    }
+    // Hàm tải script động
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    // Gửi nội dung file lên AI để phân tích
+    async function analyzeFileWithAI(content, filename) {
+      const typingIndicator = showTypingIndicator();
+      try {
+        const prompt = `Tôi vừa tải lên file tên "${filename}". Hãy đọc, tóm tắt nội dung, và cho biết file này nói về gì. Nếu là code, hãy nhận diện ngôn ngữ và giải thích chức năng chính.`;
+        const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+              { role: 'user', parts: [{ text: prompt + '\n\nNội dung file:\n' + content.slice(0, 12000) }] }
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 1,
+              topP: 1,
+              maxOutputTokens: 32768
+            }
+          })
+        });
+        const data = await response.json();
+        removeTypingIndicator(typingIndicator);
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+          const aiResponse = data.candidates[0].content.parts[0].text;
+          addMessage('assistant', aiResponse);
+        } else {
+          throw new Error('Invalid response from API');
+        }
+      } catch (error) {
+        removeTypingIndicator(typingIndicator);
+        addMessage('assistant', 'Xin lỗi, đã có lỗi khi phân tích file.');
+      }
+    }
+    
+    // Khởi tạo giao diện chat
+    function initChat() {
       if (chatHistory.length === 0) {
       // Chỉ hiển thị lời chào khi bắt đầu cuộc trò chuyện mới
         document.getElementById('welcome-message').classList.remove('hidden');
         hasMessages = false;
+        // Hiện thông báo tính năng AI
+        const note = document.getElementById('ai-feature-note');
+        if (note) note.style.display = '';
       } else {
       // Tải lịch sử trò chuyện trước đó
         document.getElementById('welcome-message').classList.add('hidden');
         loadChatHistory();
         hasMessages = true;
+        // Ẩn thông báo tính năng AI
+        const note = document.getElementById('ai-feature-note');
+        if (note) note.style.display = 'none';
       }
       
       // Thiết lập lắng nghe sự kiện cuộn
@@ -1019,64 +1505,61 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
       contentDiv.className = 'markdown';
 
       if (role === 'assistant') {
+        // Khi bắt đầu hiện chữ AI, đảm bảo nút dừng vẫn hiện
+        isAIReplying = true;
+        updateSendButtonForAI();
         // Parse markdown và tách code block
         let parsedContent = marked.parse(content);
-        // Sửa lỗi mất < hoặc <!DOCTYPE html> ở đầu code block html
-        parsedContent = parsedContent.replace(/<pre><code( class="language-html")?>([\s\S]*?)<\/code><\/pre>/g, function(match, langClass, code) {
-          let fixedCode = code;
-          // Nếu thiếu <!DOCTYPE html> ở đầu, tự động thêm vào
-          if (!/^\s*<!DOCTYPE html>/i.test(fixedCode)) {
-            fixedCode = '<!DOCTYPE html>\n' + fixedCode;
-          }
-          // Nếu thiếu <html>, tự động thêm vào
-          if (!/^\s*<!DOCTYPE html>\s*<html[\s>]/i.test(fixedCode)) {
-            fixedCode = fixedCode.replace(/<!DOCTYPE html>\s*/i, '<!DOCTYPE html>\n<html>\n');
-          }
-          // Nếu dòng đầu bị mất <, tự động thêm
-          fixedCode = fixedCode.replace(/^([^<\n]*html>)/i, '<$1');
-          // Escape lại cho an toàn
-          fixedCode = fixedCode.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+        // Tìm và thay thế các khối code bằng bảng code hiện đại, tách header và body
+        parsedContent = parsedContent.replace(/<pre><code( class="language-(.+?)")?>([\s\S]*?)<\/code><\/pre>/g, function(match, langClass, lang, code) {
+          lang = lang || 'code';
+          code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
           const codeId = 'codeblock-' + Math.random().toString(36).substr(2, 9);
+          // Header luôn hiển thị ngay, body sẽ typing
           return `
             <div class="modern-code-table" data-expanded="false">
               <div class="modern-code-header">
-                <span class="modern-code-lang">html</span>
+                <span class="modern-code-lang">${lang}</span>
                 <div class="modern-code-actions">
                   <button class="modern-code-copy" onclick="copyModernCode('${codeId}')"><i class='far fa-copy'></i></button>
-                  <button class="modern-code-expand" onclick="expandCodeFullScreen('${codeId}', 'html')"><i class='fas fa-expand'></i></button>
+                  <button class="modern-code-expand" onclick="expandCodeFullScreen('${codeId}', '${lang.replace(/'/g, '')}')"><i class='fas fa-expand'></i></button>
                 </div>
               </div>
-              <div class="modern-code-body" id="${codeId}"><pre><code class="language-html" data-typing-code="true">${fixedCode}</code></pre></div>
+              <div class="modern-code-body" id="${codeId}"><pre><code class="language-${lang}" data-typing-code="true">${code}</code></pre></div>
             </div>
           `;
         });
         // Tách từng phần tử con cấp 1 để typing từng đoạn, nhưng giữ nguyên header code
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = parsedContent;
-        // Typing từng đoạn, nhưng nếu là .modern-code-table thì chỉ typing phần code
         let children = Array.from(tempDiv.childNodes);
+        let autoFullscreened = false;
         function typeNextChild(idx) {
           if (idx >= children.length) {
             // Gửi event typingDone
             const event = new Event('typingDone');
             contentDiv.dispatchEvent(event);
+            // Khi typewriter xong, mới tắt trạng thái AI đang trả lời
+            isAIReplying = false;
+            updateSendButtonForAI();
             return;
           }
           let child = children[idx];
           if (child.nodeType === 1 && child.classList.contains('modern-code-table')) {
-            // Render header ngay
             contentDiv.appendChild(child);
-            // Typing phần code bên trong
             const codeEl = child.querySelector('code[data-typing-code="true"]');
             if (codeEl) {
               let codeText = codeEl.textContent;
               codeEl.textContent = '';
+              if (!autoFullscreened) {
+                autoFullscreened = true;
+                autoExpandCodeFullScreenTyping(codeText, codeEl.className.replace('language-', '') || 'code');
+              }
               typeWriterEffect(codeEl, codeText, 0, 2, () => typeNextChild(idx + 1));
             } else {
               typeNextChild(idx + 1);
             }
           } else {
-            // Typing đoạn văn bản thường
             let html = '';
             if (child.outerHTML) html = child.outerHTML;
             else if (child.textContent) html = child.textContent;
@@ -1084,7 +1567,6 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
             temp.innerHTML = '';
             contentDiv.appendChild(temp);
             typeWriterEffect(temp, html, 0, 2, () => {
-              // Sau khi typing xong, thay thế temp bằng nội dung thật
               temp.outerHTML = html;
               typeNextChild(idx + 1);
             });
@@ -1102,14 +1584,6 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
         actionButtons.className = 'action-buttons';
         actionButtons.style.display = 'none';
         actionButtons.innerHTML = `
-          <button class="action-btn" onclick="copyMessage(this, '${escapeHtml(content)}')">
-            <i class="far fa-copy"></i>
-            <span>Sao chép</span>
-          </button>
-          <button class="action-btn" onclick="shareMessage('${escapeHtml(content)}')">
-            <i class="fas fa-share"></i>
-            <span>Chia sẻ</span>
-          </button>
         `;
         bubble.appendChild(actionButtons);
         contentDiv.addEventListener('typingDone', () => {
@@ -1150,23 +1624,6 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
     function typeWriterEffect(element, html, i, speed, cb) {
       let isTag = false, text = '', tagBuffer = '';
       function type() {
-        if (stopTyping) {
-          element.innerHTML = html;
-          if (element.tagName === 'CODE') {
-            hljs.highlightElement(element);
-          } else {
-            element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
-              hljs.highlightElement(block);
-            });
-          }
-          if (window.MathJax) MathJax.typesetPromise();
-          if (cb) cb();
-          else {
-            const event = new Event('typingDone');
-            element.dispatchEvent(event);
-          }
-          return;
-        }
         if (i < html.length) {
           let char = html[i];
           if (char === '<') {
@@ -1186,6 +1643,11 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
          // Nếu là code block trong khung chat, auto-scroll xuống cuối khi typing
          if (element.tagName === 'CODE' && element.closest('.modern-code-body')) {
            const codeBody = element.closest('.modern-code-body');
+           codeBody.scrollTop = codeBody.scrollHeight;
+         }
+         // Nếu là code block trong overlay fullscreen, auto-scroll overlay khi typing
+         if (element.tagName === 'CODE' && element.closest('.fullscreen-code-body')) {
+           const codeBody = element.closest('.fullscreen-code-body');
            codeBody.scrollTop = codeBody.scrollHeight;
          }
           i++;
@@ -1222,142 +1684,112 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
         .replace(/'/g, "&#039;");
     }
     
-    // Sửa hàm sendMessage để tích hợp tạo ảnh
+    // Sửa hàm sendMessage để tích hợp hỏi về file đã upload
     async function sendMessage(event) {
       event.preventDefault();
-      if (isAITyping) return; // Không gửi khi AI đang trả lời
       const inputElement = document.getElementById('chat-input');
-      let message = inputElement.innerText.trim();
+      const message = inputElement.innerText.trim();
       if (!message) return;
-
-      // Nếu là code, tự động bọc code block
-      if (isLikelyCode(message)) {
-        // Thử đoán ngôn ngữ
-        let lang = '';
-        if (/^\s*<html[\s>]/i.test(message)) lang = 'html';
-        else if (/^\s*def\s+\w+\s*\(/.test(message)) lang = 'python';
-        else if (/^\s*function\s+\w+\s*\(/.test(message)) lang = 'javascript';
-        message = `\n\n\${lang}\n${message}\n\`;
-      }
-
-      // Ẩn lời chào nếu đây là tin nhắn đầu tiên
       if (!hasMessages) {
         document.getElementById('welcome-message').classList.add('hidden');
         hasMessages = true;
+        // Ẩn thông báo tính năng AI
+        const note = document.getElementById('ai-feature-note');
+        if (note) note.style.display = 'none';
       }
-
-      // Thêm tin nhắn người dùng vào khung chat
       addMessage('user', message);
       inputElement.innerText = '';
-      isAITyping = true;
-      updateSendButton();
-      stopTyping = false;
-
-      // Nếu là yêu cầu tạo ảnh
+      // Ẩn file preview nếu có file
+      if (currentFileContent && currentFileName) {
+        document.getElementById('file-preview-container').style.display = 'none';
+      }
       if (isImageRequest(message)) {
-        // Hiển thị spinner tạo ảnh
         const typingIndicator = showTypingIndicator('image');
         try {
           const imageData = await callGeminiImageAPI(message);
           removeTypingIndicator(typingIndicator);
           addImageMessage(imageData, message);
-          isAITyping = false;
-          updateSendButton();
-          // Có thể lưu lịch sử nếu muốn
         } catch (err) {
           removeTypingIndicator(typingIndicator);
           addMessage('assistant', 'Xin lỗi, đã có lỗi khi tạo ảnh. Vui lòng thử lại.');
-          isAITyping = false;
-          updateSendButton();
         }
         return;
       }
-
-      // === Nếu có file đã tải lên, gửi nội dung file kèm câu hỏi ===
-      let userPrompt = message;
-      if (uploadedFileContent && uploadedFileName) {
-        userPrompt = `Phân tích file sau đây (tên file: ${uploadedFileName}):\n\n-----\n${uploadedFileContent}\n-----\n\nSau đó trả lời câu hỏi: ${message}`;
-      }
-
-      // Chuẩn bị lịch sử hội thoại gửi lên API
-      const conversation = [
-        {
-          role: 'user',
-          parts: [{ text: SYSTEM_PROMPT }]
-        },
-        {
-          role: 'model',
-          parts: [{ text: 'Xin chào! Tôi là **Nexa Space**, trợ lý ảo được sáng lập bởi **Khoa Dev 2007**. Tôi sẽ cố gắng hết sức để giúp đỡ bạn!' }]
-        },
+      
+      // Nếu có file đã upload, thêm nội dung file vào prompt
+      let conversation = [
+        { role: 'user', parts: [{ text: isDevMode ? DEV_SYSTEM_PROMPT : SYSTEM_PROMPT }] },
+        { role: 'model', parts: [{ text: 'Xin chào! Tôi là **Nexa Space**, trợ lý ảo được sáng lập bởi **Khoa Dev 2007**. Tôi sẽ cố gắng hết sức để giúp đỡ bạn!' }] },
         ...chatHistory.map(msg => ({
           role: msg.role === 'user' ? 'user' : 'model',
           parts: [{ text: msg.content }]
         }))
       ];
+      if (currentFileContent) {
+        conversation.push({
+          role: 'user',
+          parts: [{ text: `Lưu ý: Người dùng đã tải lên file tên "${currentFileName}" với nội dung sau (có thể rút gọn):\n${currentFileContent.slice(0, 12000)}\nCác câu hỏi tiếp theo có thể liên quan đến file này.` }]
+        });
+      }
       conversation.push({
         role: 'user',
-        parts: [{ text: userPrompt }]
+        parts: [{ text: message }]
       });
+      // Đặt trạng thái AI đang trả lời NGAY khi gửi request
+      isAIReplying = true;
+      updateSendButtonForAI();
       const typingIndicator = showTypingIndicator();
+      aiAbortController = new AbortController();
+      aiStopped = false;
       try {
         const response = await fetch(`${API_URL}?key=${API_KEY}`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: conversation,
             generationConfig: {
               temperature: 0.9,
               topK: 1,
               topP: 1,
-              maxOutputTokens: 8192,
+              maxOutputTokens: 32768,
               stopSequences: []
             },
             safetySettings: [
-              {
-                category: "HARM_CATEGORY_HARASSMENT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_HATE_SPEECH",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              }
+              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
             ]
-          })
+          }),
+          signal: aiAbortController.signal
         });
+        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
         const data = await response.json();
+        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
         removeTypingIndicator(typingIndicator);
+        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
+        isAIReplying = false;
+        updateSendButtonForAI();
         if (data.candidates && data.candidates[0].content.parts[0].text) {
           const aiResponse = data.candidates[0].content.parts[0].text;
-          if (!stopTyping) {
-            addMessage('assistant', aiResponse);
-            chatHistory.push(
-              { role: 'user', content: message },
-              { role: 'assistant', content: aiResponse }
-            );
-            localStorage.setItem('khoaAI_chatHistory', JSON.stringify(chatHistory));
-            scrollToBottom();
-          }
+          addMessage('assistant', aiResponse);
+          chatHistory.push(
+            { role: 'user', content: message },
+            { role: 'assistant', content: aiResponse }
+          );
+          localStorage.setItem('khoaAI_chatHistory', JSON.stringify(chatHistory));
+          scrollToBottom();
         } else {
           throw new Error('Invalid response from API');
         }
-        isAITyping = false;
-        updateSendButton();
       } catch (error) {
-        console.error('Error:', error);
+        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
         removeTypingIndicator(typingIndicator);
+        isAIReplying = false;
+        updateSendButtonForAI();
+        if (error.name === 'AbortError') return;
+        console.error('Error:', error);
         addMessage('assistant', 'Xin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
-        isAITyping = false;
-        updateSendButton();
       }
     }
     
@@ -1366,15 +1798,18 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
       const chatContainer = document.getElementById('chat-container');
       const messageElement = createMessageElement(role, content);
       chatContainer.appendChild(messageElement);
-      
-      // Cuộn xuống cuối sau một khoảng ngắn để DOM cập nhật
-      setTimeout(() => {
-        scrollToBottom();
-      }, 50);
+      // Nếu là AI trả lời thì luôn auto scroll xuống cuối
+      if (role === 'assistant') {
+        setTimeout(() => {
+          scrollToBottom(true);
+        }, 10);
+      }
     }
     
     // Hiển thị hiệu ứng AI đang trả lời với hoạt ảnh đẹp
     function showTypingIndicator(type = 'text') {
+      isAIReplying = true;
+      updateSendButtonForAI();
       const chatContainer = document.getElementById('chat-container');
       const typingDiv = document.createElement('div');
       typingDiv.className = 'flex justify-start';
@@ -1384,7 +1819,7 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
         bubble.innerHTML = `
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="fa fa-spinner fa-spin"></span>
-            <span>Khoa AI đang tạo ảnh...</span>
+            <span>Đang tạo ảnh AI...</span>
           </div>
         `;
       } else {
@@ -1396,16 +1831,46 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
       }
       typingDiv.appendChild(bubble);
       chatContainer.appendChild(typingDiv);
-      scrollToBottom();
+      scrollToBottom(true);
+      currentTypingIndicator = typingDiv;
       return typingDiv;
     }
     
         // Xóa hiệu ứng AI đang trả lời
     function removeTypingIndicator(typingElement) {
+      isAIReplying = false;
+      updateSendButtonForAI();
       if (typingElement && typingElement.parentNode) {
         typingElement.parentNode.removeChild(typingElement);
       }
+      if (currentTypingIndicator === typingElement) currentTypingIndicator = null;
     }
+    
+    // Hàm cập nhật nút gửi khi AI đang trả lời
+    function updateSendButtonForAI() {
+      const sendBtn = document.getElementById('send-button');
+      const icon = document.getElementById('send-button-icon');
+      if (isAIReplying) {
+        sendBtn.classList.remove('rounded-full','bg-black');
+        sendBtn.classList.add('rounded-md','bg-gray-400');
+        icon.textContent = 'stop';
+      } else {
+        sendBtn.classList.remove('rounded-md','bg-gray-400');
+        sendBtn.classList.add('rounded-full','bg-black');
+        icon.textContent = 'arrow_upward';
+      }
+    }
+    
+    // Khi bấm nút gửi lúc AI đang trả lời thì dừng chat
+    const sendBtn = document.getElementById('send-button');
+    sendBtn.addEventListener('click', function(e) {
+      if (isAIReplying) {
+        e.preventDefault();
+        if (currentTypingIndicator) removeTypingIndicator(currentTypingIndicator);
+        aiStopped = true;
+        if (aiAbortController) aiAbortController.abort();
+      }
+    });
     
     // Hàm hiển thị ảnh trong chat
     function addImageMessage(imageData, prompt) {
@@ -1434,7 +1899,7 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
         `;
         messageDiv.appendChild(bubble);
         chatContainer.appendChild(messageDiv);
-        setTimeout(scrollToBottom, 50);
+        setTimeout(() => scrollToBottom(true), 10);
 
         // Xử lý popup phóng to ảnh
         let popup = document.getElementById('image-popup-overlay');
@@ -1520,50 +1985,57 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
       });
     }
     
-    // Cuộn xuống cuối mượt mà hơn
-    function scrollToBottom() {
+    // Hàm cuộn xuống cuối mượt mà hơn
+    function scrollToBottom(force = false) {
       const chatContainer = document.getElementById('chat-container');
+      // Chỉ auto scroll nếu user đang ở gần cuối hoặc force = true
+      const scrollTop = chatContainer.scrollTop;
       const scrollHeight = chatContainer.scrollHeight;
       const clientHeight = chatContainer.clientHeight;
-      // Cuộn mượt xuống cuối khung chat
-      chatContainer.scrollTo({
-        top: scrollHeight - clientHeight,
-        behavior: 'smooth'
-      });
+      if (force || (scrollHeight - (scrollTop + clientHeight) < 120)) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
       // Ẩn nút cuộn sau khi đã cuộn xong
       setTimeout(() => {
         hideScrollButton();
       }, 500);
     }
-    // Khi bấm nút cuộn xuống cuối
-    document.getElementById('scroll-to-bottom').onclick = scrollToBottom;
+    
     // Kiểm tra vị trí cuộn và hiển thị/ẩn nút cuộn xuống cuối
     function checkScrollPosition() {
       const chatContainer = document.getElementById('chat-container');
       const scrollTop = chatContainer.scrollTop;
       const scrollHeight = chatContainer.scrollHeight;
       const clientHeight = chatContainer.clientHeight;
+      
       if (scrollHeight - (scrollTop + clientHeight) > 100) {
         showScrollButton();
       } else {
         hideScrollButton();
       }
     }
+    
     // Thiết lập lắng nghe sự kiện cuộn
     function setupScrollListener() {
       const chatContainer = document.getElementById('chat-container');
       chatContainer.addEventListener('scroll', function() {
         checkScrollPosition();
+        // Kiểm tra nếu người dùng đang ở gần cuối (cách đáy < 100px)
+        const scrollTop = chatContainer.scrollTop;
+        const scrollHeight = chatContainer.scrollHeight;
+        const clientHeight = chatContainer.clientHeight;
+        isUserAtBottom = (scrollHeight - (scrollTop + clientHeight) < 100);
       });
-      // Kiểm tra lại khi thay đổi kích thước cửa sổ
       window.addEventListener('resize', checkScrollPosition);
     }
+    
     // Hiện nút cuộn xuống cuối với hiệu ứng
     function showScrollButton() {
       const scrollButton = document.getElementById('scroll-to-bottom');
       scrollButton.classList.remove('hidden');
       scrollButton.classList.add('visible');
     }
+    
     // Ẩn nút cuộn xuống cuối với hiệu ứng
     function hideScrollButton() {
       const scrollButton = document.getElementById('scroll-to-bottom');
@@ -1621,6 +2093,7 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
     }
     
 
+    
     // Voice-to-text (SpeechRecognition) cho nút mic cạnh nút gửi
     let isListening = false;
     let recognition = null;
@@ -1755,7 +2228,7 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
           <div class="fullscreen-code-header">
             <span class="fullscreen-code-lang">${lang}</span>
             <div class="fullscreen-code-actions">
-              <button class="fullscreen-code-copy" onclick="copyFullScreenCode(this)"><i class='far fa-copy'></i></button>
+              <button class="fullscreen-code-copy" onclick="copyFullScreenCodeDirect()"><i class='far fa-copy'></i></button>
               <button class="fullscreen-code-close" onclick="closeFullScreenCode(this)"><i class='fas fa-compress'></i></button>
             </div>
           </div>
@@ -1770,140 +2243,245 @@ Bạn là **Nexa Space** — người bạn đồng hành đáng tin cậy của
         });
       }, 10);
     }
+    // Hàm copy toàn bộ code trong overlay fullscreen
+    function copyFullScreenCodeDirect() {
+      const overlay = document.querySelector('.fullscreen-code-overlay');
+      if (!overlay) return;
+      const code = overlay.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = overlay.querySelector('.fullscreen-code-copy');
+        if (btn) {
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = "<i class='fas fa-check'></i>";
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+          }, 1500);
+        }
+      });
+    }
     function closeFullScreenCode(btn) {
       const overlay = btn.closest('.fullscreen-code-overlay');
       if (overlay) overlay.remove();
+      // Sau khi đóng overlay, highlight lại code trong chat
+      setTimeout(() => {
+        document.querySelectorAll('.modern-code-body code').forEach(block => {
+          hljs.highlightElement(block);
+        });
+      }, 10);
     }
-    function copyFullScreenCode(btn) {
-      const code = btn.closest('.fullscreen-code-table').querySelector('code').innerText;
-      navigator.clipboard.writeText(code).then(() => {
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = "<i class='fas fa-check'></i>";
-        setTimeout(() => {
-          btn.innerHTML = originalHtml;
-        }, 1500);
-      });
+    // Hiển thị file preview phía trên ô nhập chat
+    function updateFilePreview() {
+      const container = document.getElementById('file-preview-container');
+      if (!currentFileContent || !currentFileName) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+      const ext = currentFileName.split('.').pop().toLowerCase();
+      const fileTypeInfo = getFileTypeInfo(ext);
+      container.innerHTML = `
+        <div class="file-preview-box">
+          <span class="file-preview-icon" style="color:${fileTypeInfo.color}">${fileTypeInfo.icon}</span>
+          <div class="file-preview-info">
+            <span class="file-preview-name">${currentFileName}</span>
+            <span class="file-preview-type">${fileTypeInfo.label}</span>
+          </div>
+          <button class="file-preview-remove" title="Xóa file" onclick="removeUploadedFile()"><i class="fas fa-times"></i></button>
+        </div>
+      `;
+      container.style.display = '';
     }
+    // Nhận diện loại file, icon, màu, label
+    function getFileTypeInfo(ext) {
+      const map = {
+        'py':  { icon: '<i class="fab fa-python"></i>', color: '#ff9800', label: 'Python' },
+        'js':  { icon: '<i class="fab fa-js-square"></i>', color: '#f7df1e', label: 'JavaScript' },
+        'ts':  { icon: '<i class="fab fa-js"></i>', color: '#007acc', label: 'TypeScript' },
+        'java':{ icon: '<i class="fab fa-java"></i>', color: '#e76f00', label: 'Java' },
+        'c':   { icon: '<i class="fas fa-code"></i>', color: '#2196f3', label: 'C' },
+        'cpp': { icon: '<i class="fas fa-code"></i>', color: '#1976d2', label: 'C++' },
+        'txt': { icon: '<i class="far fa-file-alt"></i>', color: '#90caf9', label: 'Text' },
+        'md':  { icon: '<i class="fab fa-markdown"></i>', color: '#fff', label: 'Markdown' },
+        'csv': { icon: '<i class="fas fa-table"></i>', color: '#43a047', label: 'CSV' },
+        'json':{ icon: '<i class="fas fa-brackets-curly"></i>', color: '#ffb300', label: 'JSON' },
+        'xml': { icon: '<i class="fas fa-code"></i>', color: '#ab47bc', label: 'XML' },
+        'html':{ icon: '<i class="fab fa-html5"></i>', color: '#e44d26', label: 'HTML' },
+        'log': { icon: '<i class="fas fa-file-alt"></i>', color: '#bdbdbd', label: 'Log' },
+        'pdf': { icon: '<i class="far fa-file-pdf"></i>', color: '#e53935', label: 'PDF' },
+        'doc': { icon: '<i class="far fa-file-word"></i>', color: '#1976d2', label: 'Word' },
+        'docx':{ icon: '<i class="far fa-file-word"></i>', color: '#1976d2', label: 'Word' },
+        'xls': { icon: '<i class="far fa-file-excel"></i>', color: '#43a047', label: 'Excel' },
+        'xlsx':{ icon: '<i class="far fa-file-excel"></i>', color: '#43a047', label: 'Excel' },
+      };
+      return map[ext] || { icon: '<i class="fas fa-file"></i>', color: '#fff', label: ext.toUpperCase() };
+    }
+    // Xóa file đã upload
+    function removeUploadedFile() {
+      currentFileContent = null;
+      currentFileName = null;
+      updateFilePreview();
+    }
+    // Khi xóa file thì update preview
+    // Khi load lại trang, nếu có file thì update preview
+    window.addEventListener('DOMContentLoaded', updateFilePreview);
 
-    // === File upload & phân tích ===
-    let uploadedFileContent = null;
-    let uploadedFileName = null;
-    let fileLoadingIndicator = null;
-
-    // Hiển thị animation loading khi đang đọc file
-    function showFileLoadingAnimation(filename) {
-      // Nếu đã có indicator thì xóa
-      removeFileLoadingAnimation();
+    // Thêm animation loading mới đẹp hơn
+    function showFileLoadingAnimationV2(filename) {
+      removeFileLoadingAnimationV2();
       const chatContainer = document.getElementById('chat-container');
       const loadingDiv = document.createElement('div');
       loadingDiv.className = 'flex justify-start';
-      loadingDiv.id = 'file-loading-indicator';
+      loadingDiv.id = 'file-loading-animation-v2';
       loadingDiv.innerHTML = `
-        <div class="max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator" style="display:flex;align-items:center;gap:10px;">
-          <span class="fa fa-spinner fa-spin"></span>
-          <span>Đang đọc file <b>${filename}</b>...</span>
+        <div class="max-w-[85%] bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-md animate-pulse">
+          <span class="fa fa-spinner fa-spin text-blue-500 text-2xl"></span>
+          <span id="file-loading-text-v2" class="font-medium text-blue-700">Đang tải file <b>${filename}</b>...</span>
         </div>
       `;
       chatContainer.appendChild(loadingDiv);
-      scrollToBottom();
-      fileLoadingIndicator = loadingDiv;
+      scrollToBottom(true);
+      return loadingDiv;
     }
-    function removeFileLoadingAnimation() {
-      const el = document.getElementById('file-loading-indicator');
-      if (el && el.parentNode) el.parentNode.removeChild(el);
-      fileLoadingIndicator = null;
+    function removeFileLoadingAnimationV2() {
+      const loadingDiv = document.getElementById('file-loading-animation-v2');
+      if (loadingDiv) loadingDiv.remove();
     }
 
-    // Xử lý nút tải file
-    document.getElementById('upload-file-btn').onclick = function() {
-      document.getElementById('file-input').click();
-    };
-    document.getElementById('file-input').onchange = function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (file.size > 5 * 1024 * 1024) {
-        addMessage('user', `❌ <b>${file.name}</b> — <span style='color:#ef4444;'>Chỉ hỗ trợ file dưới 5MB.</span>`);
-        return;
+    // Hàm tự động mở overlay fullscreen code và typing code trong overlay
+    function autoExpandCodeFullScreenTyping(code, lang) {
+      // Xóa overlay cũ nếu có
+      const oldOverlay = document.getElementById('auto-fullscreen-code-overlay');
+      if (oldOverlay) oldOverlay.remove();
+      // Tạo overlay
+      let overlay = document.createElement('div');
+      overlay.className = 'fullscreen-code-overlay';
+      overlay.id = 'auto-fullscreen-code-overlay';
+      overlay.innerHTML = `
+        <div class="fullscreen-code-table">
+          <div class="fullscreen-code-header">
+            <span class="fullscreen-code-lang">${lang}</span>
+            <div class="fullscreen-code-actions">
+              <button class="fullscreen-code-close" onclick="closeAutoFullScreenCode()"><i class='fas fa-compress'></i></button>
+            </div>
+          </div>
+          <div class="fullscreen-code-body"><pre><code class="language-${lang}" id="auto-fullscreen-codeblock"></code></pre></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      // Typing effect cho code trong overlay
+      const codeEl = overlay.querySelector('#auto-fullscreen-codeblock');
+      typeWriterEffect(codeEl, escapeHtml(code), 0, 2, () => {
+        hljs.highlightElement(codeEl);
+      });
+    }
+    function closeAutoFullScreenCode() {
+      const overlay = document.getElementById('auto-fullscreen-code-overlay');
+      if (overlay) overlay.remove();
+      // Sau khi đóng overlay, highlight lại code trong chat
+      setTimeout(() => {
+        document.querySelectorAll('.modern-code-body code').forEach(block => {
+          hljs.highlightElement(block);
+        });
+      }, 10);
+    }
+
+    // Thêm biến để theo dõi trạng thái người dùng có đang ở cuối chat không
+    let isUserAtBottom = true;
+
+    // Xử lý nút đóng thông báo tính năng AI
+    document.addEventListener('DOMContentLoaded', function() {
+      const note = document.getElementById('ai-feature-note');
+      const closeBtn = document.getElementById('ai-feature-note-close');
+      if (closeBtn) {
+        closeBtn.onclick = function() {
+          note.style.display = 'none';
+          localStorage.setItem('aiFeatureNoteClosed', '1');
+        };
       }
-      uploadedFileName = file.name;
-      const textTypes = [
-        'text/plain', 'text/csv', 'application/json', 'text/markdown', 'text/xml', 'text/html',
-        'application/javascript', 'application/x-javascript', 'text/x-python', 'text/x-java-source',
-        'text/x-c', 'text/x-c++', 'text/x-csharp', 'application/xml', 'application/x-www-form-urlencoded'
-      ];
-      const ext = file.name.split('.').pop().toLowerCase();
-      const textExts = ['txt','csv','md','log','json','xml','html','js','ts','py','java','c','cpp','cs'];
-      if (textTypes.includes(file.type) || textExts.includes(ext)) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          uploadedFileContent = evt.target.result;
-          // Hiển thị nội dung file dưới dạng code block
-          const lang = detectCodeLang(uploadedFileName, uploadedFileContent);
-          addMessage('user', `✅ <b>${uploadedFileName}</b> — <span style='color:#22c55e;'>Đã tải lên thành công!</span>\n\n\${lang}\n${uploadedFileContent}\n\`);
-        };
-        reader.onerror = function() {
-          addMessage('user', `❌ <b>${uploadedFileName}</b> — <span style='color:#ef4444;'>Lỗi khi đọc file.</span>`);
-        };
-        reader.readAsText(file);
+      // Nếu đã đóng trước đó thì ẩn luôn
+      if (localStorage.getItem('aiFeatureNoteClosed') === '1') {
+        note.style.display = 'none';
+      }
+    });
+
+    // === DARK MODE THEME LOGIC ===
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        document.getElementById('theme-toggle-icon').textContent = 'light_mode';
       } else {
-        addMessage('user', `❌ <b>${uploadedFileName}</b> — <span style='color:#ef4444;'>Chỉ hỗ trợ file text, csv, md, log, json, xml, html, js, ts, py, java, c, cpp, cs.</span>`);
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        document.getElementById('theme-toggle-icon').textContent = 'dark_mode';
       }
-    };
-    // Không còn hàm showUploadedFileInfo và removeUploadedFile nữa
-
-    let isAITyping = false;
-    let stopTyping = false;
-
-    function updateSendButton() {
-  const sendBtn = document.getElementById('send-button');
-  const sendIcon = document.getElementById('send-icon');
-  if (isAITyping) {
-    sendIcon.innerHTML = '<span class="material-icons">stop</span>'; // Sử dụng material-icons thay vì material-symbols-outlined
-    sendBtn.title = 'Dừng trả lời';
-    sendBtn.style.color = '#ef4444'; // Màu đỏ để dễ nhận biết
-  } else {
-    sendIcon.innerHTML = '<span class="material-symbols-outlined">send</span>';
-    sendBtn.title = 'Gửi';
-    sendBtn.style.color = '';
-  }
-}
-    // Khi bấm nút gửi/dừng
-    document.getElementById('send-button').onclick = function(e) {
-      if (isAITyping) {
-        // Đang trả lời, bấm để dừng
-        stopTyping = true;
-        isAITyping = false;
-        updateSendButton();
-        // Xóa typing indicator nếu còn
-        const typingEls = document.querySelectorAll('.typing-indicator');
-        typingEls.forEach(el => el.parentNode && el.parentNode.removeChild(el));
-        // Cho phép nhập và gửi lại
-        document.getElementById('chat-input').focus();
-        e.preventDefault();
-        return false;
-      }
-      // Nếu không phải đang trả lời, để form submit bình thường
-    };
-
-    // Hàm nhận diện ngôn ngữ code từ tên file
-    function detectCodeLang(filename, content) {
-      if (!filename) return '';
-      const ext = filename.split('.').pop().toLowerCase();
-      const map = {
-        js: 'javascript', ts: 'typescript', py: 'python', java: 'java', c: 'c', cpp: 'cpp', cs: 'csharp',
-        html: 'html', css: 'css', json: 'json', md: 'markdown', xml: 'xml', log: 'log', csv: 'csv'
-      };
-      if (map[ext]) return map[ext];
-      // Nếu không có ext, thử đoán theo nội dung
-      if (/^\s*<html[\s>]/i.test(content)) return 'html';
-      if (/^\s*def\s+\w+\s*\(/.test(content)) return 'python';
-      if (/^\s*function\s+\w+\s*\(/.test(content)) return 'javascript';
-      return '';
     }
-    // Hàm kiểm tra nội dung có phải code không
-    function isLikelyCode(text) {
-      // Có nhiều dòng indent, hoặc bắt đầu bằng <html>, function, def, class, import, #include, etc.
-      return /<html[\s>]|function\s|def\s|class\s|#include|import\s|public\s|private\s|const\s|let\s|var\s|=>|\{\s*\n|\n\s{2,}/.test(text);
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    }
+    // Tự động nhận diện theme hệ điều hành nếu chưa chọn
+    (function() {
+      let theme = localStorage.getItem('theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      setTheme(theme);
+    })();
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+    let isDevMode = false;
+    let prevTheme = null;
+    const DEV_SYSTEM_PROMPT = `\
+Bạn là trợ lý AI chuyên về lập trình, code, debug, giải thích lỗi, tạo test case.\n- Luôn trả lời chi tiết, giải thích từng phần code.\n- Nếu người dùng gửi code, hãy phân tích, tìm lỗi, gợi ý sửa, tạo test case.\n- Ưu tiên trả lời bằng tiếng Việt, trình bày rõ ràng, có ví dụ minh họa.\n- Nếu có thể, hãy highlight code, giải thích từng dòng, và đưa ra lưu ý thực tế.\n`;
+
+    // Thêm sự kiện cho nút chuyển chế độ AI lập trình
+    document.getElementById('dev-mode-toggle').addEventListener('click', function() {
+      isDevMode = !isDevMode;
+      this.classList.toggle('active', isDevMode);
+      // Ẩn welcome-message nếu chưa có tin nhắn
+      if (!hasMessages) {
+        document.getElementById('welcome-message').classList.add('hidden');
+        hasMessages = true;
+      }
+      // Đổi giao diện khi bật/tắt chế độ lập trình
+      if (isDevMode) {
+        // Lưu trạng thái theme trước đó
+        prevTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        if (!document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.add('dark');
+        }
+        document.body.classList.add('dev-mode-hacker');
+        // Hiện animation hướng dẫn tắt chế độ
+        showDevModeHint();
+      } else {
+        // Trả lại trạng thái theme trước đó
+        if (prevTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        }
+        document.body.classList.remove('dev-mode-hacker');
+        removeDevModeHint();
+      }
+      addMessage('assistant', isDevMode
+        ? '🧑‍💻 Đã bật chế độ AI hỗ trợ lập trình. Hãy gửi code hoặc câu hỏi về lập trình để mình giúp nhé!'
+        : 'Đã tắt chế độ AI hỗ trợ lập trình.');
+    });
+
+    // Animation hướng dẫn tắt chế độ lập trình
+    function showDevModeHint() {
+      removeDevModeHint();
+      const chatContainer = document.getElementById('chat-container');
+      const hintDiv = document.createElement('div');
+      hintDiv.className = 'dev-mode-hint';
+      hintDiv.innerHTML = `
+        <span class="dev-mode-arrow">↓</span>
+        <span>Bấm lại <b><i class='material-icons' style='vertical-align:middle'>code</i> Chế độ lập trình</b> phía trên để <u>tắt chế độ này</u>!<br>Hoặc tiếp tục gửi code để được hỗ trợ.</span>
+      `;
+      chatContainer.prepend(hintDiv);
+    }
+    function removeDevModeHint() {
+      const hint = document.querySelector('.dev-mode-hint');
+      if (hint) hint.remove();
     }
   </script>
 </body>
