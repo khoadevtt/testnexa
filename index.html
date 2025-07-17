@@ -140,36 +140,47 @@
     .markdown blockquote:hover {
       box-shadow: 0 4px 16px 0 rgba(96,165,250,0.13);
     }
-    .markdown pre {
-      background-color: #1e1e1e; /* Darker background for code */
+    .markdown pre, .modern-code-body pre, .fullscreen-code-body pre {
+      background-color: #1e1e1e;
       border-radius: 8px;
-      padding: 1.2em 1em 1em 1em; /* Adjusted padding */
+      padding: 1.2em 1em 1em 1em;
       overflow-x: auto;
-      position: relative;
-      margin: 1.5em 0; /* Increased margin */
-      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.2); /* Stronger shadow */
-      border: 1px solid #333; /* Darker border */
-      transition: box-shadow 0.2s;
+      margin: 1.5em 0;
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.2);
+      border: 1px solid #333;
+      white-space: pre !important;
+      word-break: keep-all !important;
+      word-wrap: normal !important;
+      /* Đảm bảo không wrap code, không mất ký tự */
+      max-width: 100%;
     }
-    .markdown pre:hover {
-      box-shadow: 0 6px 24px 0 rgba(0,0,0,0.3); /* Stronger hover shadow */
-    }
-    .markdown code {
+    .markdown code, .modern-code-body code, .fullscreen-code-body code {
       font-family: 'Fira Mono', 'Courier New', Courier, monospace;
-      background-color: #e5e7eb; /* Lighter background for inline code */
-      padding: 0.2em 0.5em; /* Adjusted padding */
+      background-color: #e5e7eb;
+      padding: 0.2em 0.5em;
       border-radius: 4px;
-      font-size: 0.95em; /* Slightly smaller font */
+      font-size: 0.95em;
       color: #be185d;
-      word-break: break-word;
-      transition: background 0.2s;
+      white-space: pre !important;
+      word-break: keep-all !important;
+      word-wrap: normal !important;
+      overflow-x: auto;
+      display: block;
+      max-width: 100%;
     }
-    .markdown pre code {
-      background-color: transparent;
-      padding: 0;
-      border-radius: 0;
-      color: #d4d4d4; /* Lighter color for code in pre */
-      font-size: 1em;
+    @media (max-width: 640px) {
+      .markdown pre, .modern-code-body pre, .fullscreen-code-body pre {
+        font-size: 0.9em;
+        padding: 0.6em 0.2em;
+        overflow-x: auto;
+        max-width: 100vw;
+      }
+      .markdown code, .modern-code-body code, .fullscreen-code-body code {
+        font-size: 0.9em;
+        padding: 0.1em 0.2em;
+        overflow-x: auto;
+        max-width: 100vw;
+      }
     }
     .markdown table {
       border-collapse: separate;
@@ -1070,6 +1081,21 @@
       color: #fff !important;
       filter: drop-shadow(0 0 8px #fff8);
     }
+    .hieai-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e0e7ef;
+      border-top: 3px solid #2563eb;
+      border-radius: 50%;
+      animation: hieai-spin 1s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    @keyframes hieai-spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
@@ -1171,6 +1197,50 @@
     const IMAGE_API_KEY = 'AIzaSyC7Z42GrbpJcJ6ljFcEAPgQUUJ90kNt040';
     const IMAGE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent';
 
+    // Danh sách API key cho Gemini
+    const API_KEYS = [
+      'AIzaSyAZ9n2cG72K50iT_H9hz9b3dRZniCUu5Fk',
+      'AIzaSyBJ0UJEU0lTgZFp-QOmXIRMI25vhi2LpHQ',
+      'AIzaSyBpJM12EZ99y09fJQ3fw97mjLLS666Mq9E',
+      'AIzaSyCsqGVFRJ9B1cPK9ZQV9YJ36wlNOfDehbw'
+    ];
+    let apiKeyIndex = 0;
+    function getCurrentApiKey() {
+      return API_KEYS[apiKeyIndex];
+    }
+    function switchToNextApiKey() {
+      apiKeyIndex++;
+      return apiKeyIndex < API_KEYS.length;
+    }
+
+    // Hàm gọi Gemini API với retry khi hết quota/hết hạn
+    async function callGeminiAPIWithRetry(requestBody, apiUrl) {
+      let lastError = null;
+      apiKeyIndex = 0;
+      while (apiKeyIndex < API_KEYS.length) {
+        try {
+          const response = await fetch(`${apiUrl}?key=${getCurrentApiKey()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+          });
+          if (response.ok) {
+            return await response.json();
+          } else {
+            if (response.status === 403 || response.status === 429) {
+              if (!switchToNextApiKey()) break;
+            } else {
+              throw new Error(await response.text());
+            }
+          }
+        } catch (err) {
+          lastError = err;
+          if (!switchToNextApiKey()) break;
+        }
+      }
+      throw lastError || new Error('Hết API key hoặc lỗi không xác định');
+    }
+
     // Hàm nhận diện yêu cầu tạo ảnh
     function isImageRequest(message) {
       const lower = message.toLowerCase();
@@ -1192,30 +1262,16 @@
 
     // Hàm gọi API tạo ảnh
     async function callGeminiImageAPI(prompt) {
-      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=AIzaSyDZKxJyJpD-qreGMKOdSu5l4BF5gMBOSt0';
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: prompt }
-            ]
-          }],
-          generationConfig: {
-            responseModalities: ["TEXT", "IMAGE"]
-          }
-        })
-      });
-      if (!response.ok) {
-        let msg = 'API tạo ảnh lỗi';
-        try {
-          const errorData = await response.json();
-          msg = errorData.error?.message || msg;
-        } catch {}
-        throw new Error(msg);
-      }
-      const data = await response.json();
+      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent';
+      const requestBody = {
+        contents: [{
+          parts: [ { text: prompt } ]
+        }],
+        generationConfig: {
+          responseModalities: ["TEXT", "IMAGE"]
+        }
+      };
+      const data = await callGeminiAPIWithRetry(requestBody, url);
       for (const candidate of data.candidates) {
         for (const part of candidate.content.parts) {
           if (part.inlineData) return part.inlineData.data;
@@ -1551,7 +1607,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
                 autoFullscreened = true;
                 autoExpandCodeFullScreenTyping(codeText, codeEl.className.replace('language-', '') || 'code');
               }
-              typeWriterEffect(codeEl, codeText, 0, 2, () => typeNextChild(idx + 1));
+              typeWriterEffect(codeEl, codeText, 0, 1, () => typeNextChild(idx + 1));
             } else {
               typeNextChild(idx + 1);
             }
@@ -1562,7 +1618,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
             let temp = document.createElement('div');
             temp.innerHTML = '';
             contentDiv.appendChild(temp);
-            typeWriterEffect(temp, html, 0, 2, () => {
+            typeWriterEffect(temp, html, 0, 1, () => {
               temp.outerHTML = html;
               typeNextChild(idx + 1);
             });
@@ -1619,19 +1675,15 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
     // Typing effect cho AI trả lời (hỗ trợ callback khi xong)
     let isTypewriterStopped = false; // Thêm biến toàn cục kiểm soát dừng typewriter
     function typeWriterEffect(element, html, i, speed, cb) {
+      // Bật lại hiệu ứng typewriter cho cả code block (CODE tag)
       let isTag = false, text = '', tagBuffer = '';
       function type() {
         if (isTypewriterStopped) {
-          // Nếu bị dừng, hiển thị toàn bộ nội dung còn lại ngay lập tức
           element.innerHTML = html;
           setTimeout(() => {
-            if (element.tagName === 'CODE') {
-              hljs.highlightElement(element);
-            } else {
-              element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
-                hljs.highlightElement(block);
-              });
-            }
+            element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+              hljs.highlightElement(block);
+            });
             if (window.MathJax) MathJax.typesetPromise();
             if (cb) cb();
             else {
@@ -1657,28 +1709,29 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
             text += char;
           }
           element.innerHTML = text + (isTag ? tagBuffer : '');
-         // Nếu là code block trong khung chat, auto-scroll xuống cuối khi typing
-         if (element.tagName === 'CODE' && element.closest('.modern-code-body')) {
-           const codeBody = element.closest('.modern-code-body');
-           codeBody.scrollTop = codeBody.scrollHeight;
-         }
-         // Nếu là code block trong overlay fullscreen, auto-scroll overlay khi typing
-         if (element.tagName === 'CODE' && element.closest('.fullscreen-code-body')) {
-           const codeBody = element.closest('.fullscreen-code-body');
-           codeBody.scrollTop = codeBody.scrollHeight;
-         }
+          // Auto scroll code block khi đang gõ code
+          if (element.tagName === 'CODE') {
+            const codeBody = element.closest('.modern-code-body, .fullscreen-code-body');
+            if (codeBody) codeBody.scrollTop = codeBody.scrollHeight;
+          }
+          // Nếu là code block trong chat, auto scroll khung chat xuống cuối
+          if (element.tagName === 'CODE') {
+            const chatContainer = document.getElementById('chat-container');
+            if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+          if (element.tagName === 'CODE' || element.tagName !== 'CODE') {
+            element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+              hljs.highlightElement(block);
+            });
+          }
           i++;
           setTimeout(type, isTag ? 0 : speed);
         } else {
           element.innerHTML = html;
           setTimeout(() => {
-            if (element.tagName === 'CODE') {
-              hljs.highlightElement(element);
-            } else {
-              element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
-                hljs.highlightElement(block);
-              });
-            }
+            element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
+              hljs.highlightElement(block);
+            });
             if (window.MathJax) MathJax.typesetPromise();
             if (cb) cb();
             else {
@@ -1760,30 +1813,25 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       const typingIndicator = showTypingIndicator();
       aiAbortController = new AbortController();
       aiStopped = false;
+      // === Tối ưu token ===
+      let maxOutputTokens = isCodeRequest(message) ? 32768 : 2048;
       try {
-        const response = await fetch(`${API_URL}?key=${API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: conversation,
-            generationConfig: {
-              temperature: 0.9,
-              topK: 1,
-              topP: 1,
-              maxOutputTokens: 32768,
-              stopSequences: []
-            },
-            safetySettings: [
-              { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-              { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-              { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-              { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
-            ]
-          }),
-          signal: aiAbortController.signal
-        });
-        if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
-        const data = await response.json();
+        const data = await callGeminiAPIWithRetry({
+          contents: conversation,
+          generationConfig: {
+            temperature: 0.9,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: maxOutputTokens,
+            stopSequences: []
+          },
+          safetySettings: [
+            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
+          ]
+        }, API_URL);
         if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
         removeTypingIndicator(typingIndicator);
         if (aiStopped) { isAIReplying = false; updateSendButtonForAI(); return; }
@@ -1852,9 +1900,8 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       } else {
         bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
         bubble.innerHTML = `
-          <span class="typing-dot"></span>
-          <span class="typing-dot"></span>
-          <span class="typing-dot"></span>
+          <span class="hieai-spinner"></span>
+          <span style="font-size:1.1em;color:#2563eb;font-weight:500;">Hie AI đang xử lý..</span>
         `;
       }
       typingDiv.appendChild(bubble);
@@ -2387,7 +2434,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       document.body.appendChild(overlay);
       // Typing effect cho code trong overlay
       const codeEl = overlay.querySelector('#auto-fullscreen-codeblock');
-      typeWriterEffect(codeEl, escapeHtml(code), 0, 2, () => {
+      typeWriterEffect(codeEl, escapeHtml(code), 0, 1, () => {
         hljs.highlightElement(codeEl);
       });
     }
@@ -2509,6 +2556,15 @@ Bạn là trợ lý AI chuyên về lập trình, code, debug, giải thích l�
         const note = document.getElementById('ai-feature-note');
         if (note) note.style.display = 'none';
       }
+    }
+
+    // Hàm nhận diện yêu cầu về code
+    function isCodeRequest(message) {
+      const codeKeywords = [
+        'code', 'viết code', 'python', 'js', 'javascript', 'typescript', 'java', 'c++', 'c#', 'test case', 'giải thích code', 'debug', 'lỗi', 'hàm', 'function', 'class', 'component', 'py'
+      ];
+      const lower = message.toLowerCase();
+      return codeKeywords.some(keyword => lower.includes(keyword));
     }
   </script>
 </body>
