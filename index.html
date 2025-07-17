@@ -402,8 +402,35 @@
     }
     /* Voice animation */
     .voice-anim {
+      /* Giữ lại hiệu ứng rung nếu muốn */
       animation: voicePulse 1s infinite;
       color: #0ea5e9 !important;
+    }
+    /* Hiệu ứng sóng nhấp nhô cho mic */
+    .mic-wave {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      gap: 2px;
+    }
+    .mic-wave-bar {
+      width: 4px;
+      height: 14px;
+      background: #0ea5e9;
+      border-radius: 2px;
+      animation: micWaveAnim 1s infinite;
+      opacity: 0.85;
+    }
+    .mic-wave-bar:nth-child(1) { animation-delay: 0s; }
+    .mic-wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .mic-wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .mic-wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .mic-wave-bar:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes micWaveAnim {
+      0%, 100% { height: 10px; background: #0ea5e9; }
+      50% { height: 22px; background: #2563eb; }
     }
     @keyframes voicePulse {
       0% { filter: drop-shadow(0 0 0 #0ea5e9); }
@@ -1096,22 +1123,179 @@
       0% { transform: rotate(0deg);}
       100% { transform: rotate(360deg);}
     }
+    .plus-menu {
+      position: absolute;
+      bottom: 60px;
+      left: 10px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0002;
+      padding: 10px 0;
+      z-index: 50;
+      min-width: 180px;
+      animation: plusMenuFadeIn 0.25s;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .plus-menu.hidden { display: none; }
+    .plus-menu-item {
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      padding: 10px 18px;
+      font-size: 1.05em;
+      color: #23272f;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.18s;
+    }
+    .plus-menu-item:hover {
+      background: #f3f4f6;
+    }
+    @keyframes plusMenuFadeIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98);}
+      to   { opacity: 1; transform: translateY(0) scale(1);}
+    }
+    #plus-icon {
+      transition: transform 0.35s cubic-bezier(.4,2,.6,1);
+    }
+    .plus-rotate {
+      transform: rotate(135deg);
+    }
+    .send-btn-spinner {
+      display: block;
+      margin: 0 auto;
+      width: 22px;
+      height: 22px;
+      border: 3px solid #fff;
+      border-top: 3px solid #e5e7eb;
+      border-radius: 50%;
+      animation: sendBtnSpin 0.8s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes sendBtnSpin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    /* Popup New Chat 2025 */
+    #new-chat-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(30,41,59,0.18);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeInNewChat 0.25s;
+    }
+    @keyframes fadeInNewChat {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    #new-chat-popup {
+      background: #fff;
+      color: #23272f;
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 32px #0002;
+      padding: 2rem 1.2rem 1.5rem 1.2rem;
+      min-width: 280px;
+      max-width: 92vw;
+      text-align: center;
+      animation: popInNewChat 0.32s cubic-bezier(.23,1.12,.32,1.01);
+      position: relative;
+      border: 1px solid #e5e7eb;
+    }
+    @keyframes popInNewChat {
+      0% { transform: scale(0.92) translateY(18px); opacity: 0; }
+      60% { transform: scale(1.04) translateY(-4px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    #new-chat-popup .new-chat-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #23272f;
+      margin-bottom: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+    #new-chat-popup .new-chat-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 1.1rem;
+    }
+    #new-chat-popup .new-chat-btn {
+      background: #23272f;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1em;
+      border: none;
+      border-radius: 0.9rem;
+      padding: 0.7em 0;
+      box-shadow: 0 1px 6px #0001;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, transform 0.16s;
+    }
+    #new-chat-popup .new-chat-btn:hover {
+      background: #111827;
+      color: #fff;
+      transform: translateY(-1px) scale(1.03);
+    }
+    #new-chat-popup .new-chat-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.25em;
+      color: #23272f;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.18s;
+    }
+    #new-chat-popup .new-chat-close:hover {
+      opacity: 1;
+    }
+    @media (max-width: 500px) {
+      #new-chat-popup { min-width: 90vw; padding: 1rem 0.3rem 1rem 0.3rem; }
+    }
+    /* Dark mode cho popup */
+    .dark #new-chat-popup {
+      background: #23272f;
+      color: #e5e7eb;
+      border: 1px solid #374151;
+    }
+    .dark #new-chat-popup .new-chat-title {
+      color: #e5e7eb;
+    }
+    .dark #new-chat-popup .new-chat-btn {
+      background: #fff;
+      color: #23272f;
+    }
+    .dark #new-chat-popup .new-chat-btn:hover {
+      background: #e5e7eb;
+      color: #23272f;
+    }
+    .dark #new-chat-popup .new-chat-close {
+      color: #e5e7eb;
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
   <!-- Top bar -->
   <header class="flex items-center justify-between px-4 py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
-    <button aria-label="New chat" class="text-gray-700 text-xl" onclick="newChat()">
-      <i class="fa-brands fa-rocketchat"></i>
+    <button aria-label="New chat" class="text-gray-700 text-xl new-chat-modern-btn" onclick="showNewChatPopup()" style="padding:0.2em 0.3em;">
+      <span class="material-icons" style="font-size:1.45em;vertical-align:middle;">chat_bubble_outline</span>
     </button>
     <div class="flex-1 flex justify-center items-center">
       <span class="hieai-title">Hie AI gen 4</span>
     </div>
     <button id="theme-toggle" aria-label="Chuyển giao diện sáng/tối" class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 focus:outline-none border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-yellow-500 dark:text-blue-300 shadow hover:scale-110" style="margin-left:auto;">
       <span id="theme-toggle-icon" class="material-icons transition-all duration-300">dark_mode</span>
-    </button>
-    <button id="dev-mode-toggle" class="theme-toggle-btn flex items-center justify-center w-10 h-10 rounded-full ml-2" title="Chế độ AI lập trình">
-      <span class="material-icons">code</span>
     </button>
   </header>
 
@@ -1157,9 +1341,17 @@
         <!-- Hàng dưới: các nút chức năng nằm cùng hàng, tách trái phải -->
         <div class="flex items-center mt-1">
           <div>
-            <button type="button" aria-label="Gửi file" class="text-2xl text-gray-500 hover:bg-gray-100 rounded-full p-2" id="file-upload-btn" onclick="triggerFileInput()">
-              <i class="fas fa-paperclip"></i>
+            <button type="button" aria-label="Thêm" class="text-2xl text-gray-500 hover:bg-gray-100 rounded-full p-2 relative" id="file-upload-btn" onclick="togglePlusMenu()">
+              <i class="fas fa-plus" id="plus-icon"></i>
             </button>
+            <div id="plus-menu" class="plus-menu hidden">
+              <button class="plus-menu-item" onclick="triggerFileInput()">
+                <i class="fas fa-file-upload"></i> Tải lên một file
+              </button>
+              <button class="plus-menu-item" onclick="toggleDevModeFromMenu()">
+                <i class="material-icons">code</i> Chế độ lập trình
+              </button>
+            </div>
             <input type="file" id="file-input" style="display:none" accept=".txt,.csv,.pdf,.doc,.docx,.json,.md,.log,.xml,.html,.js,.py,.java,.c,.cpp,.ts,.tsx,.xls,.xlsx" />
           </div>
           <div class="flex items-center gap-2 ml-auto">
@@ -1607,7 +1799,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
                 autoFullscreened = true;
                 autoExpandCodeFullScreenTyping(codeText, codeEl.className.replace('language-', '') || 'code');
               }
-              typeWriterEffect(codeEl, codeText, 0, 1, () => typeNextChild(idx + 1));
+              typeWriterEffect(codeEl, codeText, 0, isMobileDevice() ? 0 : 1, () => typeNextChild(idx + 1));
             } else {
               typeNextChild(idx + 1);
             }
@@ -1618,7 +1810,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
             let temp = document.createElement('div');
             temp.innerHTML = '';
             contentDiv.appendChild(temp);
-            typeWriterEffect(temp, html, 0, 1, () => {
+            typeWriterEffect(temp, html, 0, isMobileDevice() ? 0 : 1, () => {
               temp.outerHTML = html;
               typeNextChild(idx + 1);
             });
@@ -1928,11 +2120,18 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       if (isAIReplying) {
         sendBtn.classList.remove('rounded-full','bg-black');
         sendBtn.classList.add('rounded-md','bg-gray-400');
-        icon.textContent = 'stop';
+        // Thay icon stop bằng spinner
+        icon.innerHTML = '<span class="send-btn-spinner"></span>';
+        icon.style.display = 'flex';
+        icon.style.justifyContent = 'center';
+        icon.style.alignItems = 'center';
       } else {
         sendBtn.classList.remove('rounded-md','bg-gray-400');
         sendBtn.classList.add('rounded-full','bg-black');
-        icon.textContent = 'arrow_upward';
+        icon.innerHTML = 'arrow_upward';
+        icon.style.display = '';
+        icon.style.justifyContent = '';
+        icon.style.alignItems = '';
       }
     }
     
@@ -2168,7 +2367,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       const inputElement = document.getElementById('chat-input');
       if (isListening) {
         if (recognition) recognition.stop();
-        icon.textContent = 'mic';
+        icon.innerHTML = 'mic';
         icon.classList.remove('voice-anim');
         isListening = false;
         return;
@@ -2184,7 +2383,16 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       finalTranscript = '';
       inputElement.innerText = '';
       recognition.onstart = () => {
-        icon.textContent = 'stop';
+        // Thay icon mic bằng hiệu ứng sóng
+        icon.innerHTML = `
+          <span class="mic-wave">
+            <span class="mic-wave-bar"></span>
+            <span class="mic-wave-bar"></span>
+            <span class="mic-wave-bar"></span>
+            <span class="mic-wave-bar"></span>
+            <span class="mic-wave-bar"></span>
+          </span>
+        `;
         icon.classList.add('voice-anim');
         isListening = true;
       };
@@ -2203,13 +2411,13 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
         placeCaretAtEnd(inputElement);
       };
       recognition.onerror = (event) => {
-        icon.textContent = 'mic';
+        icon.innerHTML = 'mic';
         icon.classList.remove('voice-anim');
         isListening = false;
         // Không xóa nội dung nhập liệu khi lỗi
       };
       recognition.onend = () => {
-        icon.textContent = 'mic';
+        icon.innerHTML = 'mic';
         icon.classList.remove('voice-anim');
         isListening = false;
         // Giữ lại nội dung đã nhận diện
@@ -2434,7 +2642,7 @@ Bạn là **Hie AI** — người bạn đồng hành đáng tin cậy của ng�
       document.body.appendChild(overlay);
       // Typing effect cho code trong overlay
       const codeEl = overlay.querySelector('#auto-fullscreen-codeblock');
-      typeWriterEffect(codeEl, escapeHtml(code), 0, 1, () => {
+      typeWriterEffect(codeEl, escapeHtml(code), 0, isMobileDevice() ? 0 : 1, () => {
         hljs.highlightElement(codeEl);
       });
     }
@@ -2565,6 +2773,99 @@ Bạn là trợ lý AI chuyên về lập trình, code, debug, giải thích l�
       ];
       const lower = message.toLowerCase();
       return codeKeywords.some(keyword => lower.includes(keyword));
+    }
+
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    function togglePlusMenu() {
+      const menu = document.getElementById('plus-menu');
+      const plusIcon = document.getElementById('plus-icon');
+      menu.classList.toggle('hidden');
+      if (!menu.classList.contains('hidden')) {
+        plusIcon.classList.add('plus-rotate');
+        setTimeout(() => {
+          document.addEventListener('mousedown', closePlusMenuOnClickOutside);
+        }, 10);
+      } else {
+        plusIcon.classList.remove('plus-rotate');
+      }
+    }
+    function closePlusMenuOnClickOutside(e) {
+      const menu = document.getElementById('plus-menu');
+      const btn = document.getElementById('file-upload-btn');
+      const plusIcon = document.getElementById('plus-icon');
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.add('hidden');
+        plusIcon.classList.remove('plus-rotate');
+        document.removeEventListener('mousedown', closePlusMenuOnClickOutside);
+      }
+    }
+    function toggleDevModeFromMenu() {
+      isDevMode = !isDevMode;
+      hideWelcomeMessage();
+      // Đổi giao diện khi bật/tắt chế độ lập trình
+      if (isDevMode) {
+        prevTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        if (!document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.add('dark');
+        }
+        document.body.classList.add('dev-mode-hacker');
+        showDevModeHint();
+        addMessage('assistant', '🧑‍💻 Đã bật chế độ AI hỗ trợ lập trình. Hãy gửi code hoặc câu hỏi về lập trình để mình giúp nhé!');
+      } else {
+        if (prevTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        }
+        document.body.classList.remove('dev-mode-hacker');
+        removeDevModeHint();
+        addMessage('assistant', 'Đã tắt chế độ AI hỗ trợ lập trình.');
+      }
+      document.getElementById('plus-menu').classList.add('hidden');
+    }
+
+    function showNewChatPopup() {
+      // Nếu đã có popup thì không tạo thêm
+      if (document.getElementById('new-chat-popup-overlay')) return;
+      const overlay = document.createElement('div');
+      overlay.id = 'new-chat-popup-overlay';
+      overlay.innerHTML = `
+        <div id="new-chat-popup">
+          <button class="new-chat-close" onclick="closeNewChatPopup()">&times;</button>
+          <div class="new-chat-title">
+            🚀 Bắt đầu cuộc trò chuyện mới
+          </div>
+          <div style="color:#374151;font-size:1.08em;margin-bottom:0.5em;">
+            Bạn muốn bắt đầu một cuộc trò chuyện mới với <b>Hie AI</b>?
+          </div>
+          <div class="new-chat-btns">
+            <button class="new-chat-btn" onclick="startNewChat()">Bắt đầu chat mới</button>
+            <button class="new-chat-btn" style="background:linear-gradient(90deg,#43e97b 0%,#38f9d7 100%);" onclick="startAnonymousChat()">Chat ẩn danh</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      // Đóng popup khi click ra ngoài
+      overlay.addEventListener('mousedown', function(e) {
+        if (e.target === overlay) closeNewChatPopup();
+      });
+    }
+    function closeNewChatPopup() {
+      const overlay = document.getElementById('new-chat-popup-overlay');
+      if (overlay) overlay.remove();
+    }
+    function startNewChat() {
+      closeNewChatPopup();
+      newChat();
+    }
+    function startAnonymousChat() {
+      closeNewChatPopup();
+      // Logic chat ẩn danh: xóa lịch sử, đặt biến ẩn danh, reload lại giao diện
+      chatHistory = [];
+      localStorage.removeItem('khoaAI_chatHistory');
+      // Có thể đặt biến isAnonymous = true nếu muốn
+      location.reload();
     }
   </script>
 </body>
