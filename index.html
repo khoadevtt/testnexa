@@ -4369,32 +4369,54 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
           // Hiệu ứng đặc biệt cho yêu cầu code
           bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
           bubble.innerHTML = `
-            <div class="code-analysis-container">
-              <div class="code-brain-icon"></div>
-              <div class="code-analysis-text">Nexa X đang phân tích và viết code</div>
-              <div class="code-processing-dots">
-                <div class="code-dot"></div>
-                <div class="code-dot"></div>
-                <div class="code-dot"></div>
-              </div>
-              <div class="code-analysis-waves">
-                <div class="code-wave"></div>
-                <div class="code-wave"></div>
-                <div class="code-wave"></div>
-                <div class="code-wave"></div>
-                <div class="code-wave"></div>
-              </div>
-              <div class="code-syntax-animation">
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-                <div class="code-syntax-char"></div>
-              </div>
+            <div class="hacker-code-rain-container" style="position:relative; min-height:120px; background:#10181a; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px #00ff9033;">
+              <div class="hacker-code-rain-title" style="color:#00ff90; text-align:center; font-family:monospace; font-size:1.1em; margin-top:12px; text-shadow:0 0 8px #00ff90cc;">Nexa X đang xử lí toàn dữ liệu...</div>
+              <canvas id="hackerCodeRainCanvas" width="420" height="90" style="display:block; margin:0 auto; background:transparent;"></canvas>
             </div>
           `;
+          setTimeout(function() {
+            const canvas = document.getElementById('hackerCodeRainCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const fontSize = 16;
+            const columns = Math.floor(width / fontSize);
+            const codeChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]();=+-_<>!&|"\' \\'.split('');
+            let drops = Array(columns).fill(1);
+            function draw() {
+              ctx.fillStyle = 'rgba(16,24,26,0.18)';
+              ctx.fillRect(0, 0, width, height);
+              ctx.font = fontSize + 'px Fira Mono, monospace';
+              for (let i = 0; i < columns; i++) {
+                const text = codeChars[Math.floor(Math.random() * codeChars.length)];
+                ctx.fillStyle = '#00ff90';
+                ctx.shadowColor = '#00ff90';
+                ctx.shadowBlur = 8;
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                ctx.shadowBlur = 0;
+                if (Math.random() > 0.975) {
+                  drops[i] = 0;
+                }
+                drops[i]++;
+                if (drops[i] * fontSize > height) {
+                  drops[i] = 0;
+                }
+              }
+            }
+            let rainAnim = setInterval(draw, 55);
+            // Xóa animation khi bubble bị xóa khỏi DOM
+            const observer = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                mutation.removedNodes.forEach(function(node) {
+                  if (node.contains && node.contains(canvas)) {
+                    clearInterval(rainAnim);
+                  }
+                });
+              });
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+          }, 10);
         } else {
           // Hiệu ứng thông thường cho text
           bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
