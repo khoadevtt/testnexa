@@ -10,8 +10,34 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=send" />
-  <!-- MathJax for math rendering -->
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- Enhanced MathJax for comprehensive math rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)'], ['\\[', '\\]']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined', 'physics', 'mhchem', 'color']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process',
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+      loader: {
+        load: ['[tex]/physics', '[tex]/mhchem', '[tex]/color']
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax is loaded and ready');
+          });
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap');
     html, body {
@@ -591,52 +617,278 @@
       color: #be185d;
     }
 
-    /* MathJax & math markdown improvements */
+    /* Enhanced MathJax & comprehensive math markdown improvements */
     .markdown .mjx-math {
-      font-size: 1.18em;
-      color: #0d9488;
-      background: #f0fdfa;
-      border-radius: 6px; /* Slightly smaller radius */
-      padding: 0.18em 0.5em;
-      margin: 0 0.1em;
-      box-shadow: 0 1px 4px 0 rgba(13,148,136,0.05); /* Lighter shadow */
-      transition: box-shadow 0.2s, background 0.2s;
+      font-size: 1.2em;
+      color: #059669;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border-radius: 8px;
+      padding: 0.25em 0.6em;
+      margin: 0 0.15em;
+      box-shadow: 0 2px 8px 0 rgba(5,150,105,0.08);
+      transition: all 0.3s ease;
       font-family: 'Fira Sans', 'Segoe UI', 'Arial', sans-serif;
+      border: 1px solid rgba(5,150,105,0.1);
     }
     .markdown .mjx-math:hover {
-      box-shadow: 0 2px 8px 0 rgba(13,148,136,0.1); /* Lighter hover shadow */
-      background: #e0f2fe;
+      box-shadow: 0 4px 16px 0 rgba(5,150,105,0.15);
+      background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+      transform: translateY(-1px);
     }
-    /* Block math center and highlight */
+    
+    /* Enhanced block math with better styling */
     .markdown .mjx-block {
       display: flex !important;
       justify-content: center;
       align-items: center;
-      background: #f0fdfa;
-      border-radius: 10px;
-      margin: 1.5em 0; /* Increased margin */
-      padding: 1.2em 0.8em; /* Increased padding */
-      box-shadow: 0 2px 12px 0 rgba(13,148,136,0.10);
-      border: 1px solid #99f6e4;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border-radius: 12px;
+      margin: 2em 0;
+      padding: 1.5em 1em;
+      box-shadow: 
+        0 4px 20px 0 rgba(5,150,105,0.12),
+        0 1px 3px 0 rgba(0,0,0,0.05);
+      border: 2px solid rgba(5,150,105,0.15);
       overflow-x: auto;
+      position: relative;
+    }
+    .markdown .mjx-block::before {
+      content: '📐';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: #059669;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      box-shadow: 0 2px 8px rgba(5,150,105,0.3);
     }
     .markdown .mjx-block:hover {
-      box-shadow: 0 6px 24px 0 rgba(13,148,136,0.18);
-      background: #e0f2fe;
+      box-shadow: 
+        0 8px 32px 0 rgba(5,150,105,0.2),
+        0 2px 8px 0 rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+      transform: translateY(-2px);
     }
-    /* Inline math highlight */
+    
+    /* Physics equations special styling */
+    .markdown .mjx-block.physics {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-color: rgba(245,158,11,0.2);
+    }
+    .markdown .mjx-block.physics::before {
+      content: '⚡';
+      background: #f59e0b;
+    }
+    .markdown .mjx-block.physics:hover {
+      background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+    }
+    
+    /* Chemistry equations special styling */
+    .markdown .mjx-block.chemistry {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      border-color: rgba(59,130,246,0.2);
+    }
+    .markdown .mjx-block.chemistry::before {
+      content: '🧪';
+      background: #3b82f6;
+    }
+    .markdown .mjx-block.chemistry:hover {
+      background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+    }
+    
+    /* Biology equations special styling */
+    .markdown .mjx-block.biology {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      border-color: rgba(34,197,94,0.2);
+    }
+    .markdown .mjx-block.biology::before {
+      content: '🧬';
+      background: #22c55e;
+    }
+    .markdown .mjx-block.biology:hover {
+      background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+    }
+    
+    /* Inline math enhanced styling */
     .markdown .mjx-tex-math {
-      background: #f0fdfa;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
       border-radius: 6px;
-      padding: 0.1em 0.4em;
-      color: #0d9488;
-      font-size: 1.08em;
+      padding: 0.15em 0.5em;
+      color: #059669;
+      font-size: 1.1em;
       margin: 0 0.1em;
+      border: 1px solid rgba(5,150,105,0.1);
+      transition: all 0.2s ease;
     }
-    /* MathJax font smoothing */
+    .markdown .mjx-tex-math:hover {
+      background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+      transform: scale(1.05);
+    }
+    
+    /* MathJax font smoothing and performance */
     .markdown .mjx-container {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: "kern" 1;
+      text-rendering: optimizeLegibility;
+    }
+    
+    /* Dark mode support for math */
+    .dark .markdown .mjx-math {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #10b981;
+      border-color: rgba(16,185,129,0.2);
+    }
+    .dark .markdown .mjx-math:hover {
+      background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    }
+    
+    .dark .markdown .mjx-block {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-color: rgba(16,185,129,0.2);
+    }
+    .dark .markdown .mjx-block:hover {
+      background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    }
+    
+    .dark .markdown .mjx-tex-math {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #10b981;
+      border-color: rgba(16,185,129,0.2);
+    }
+    
+    /* Math animation classes */
+    .math-animated {
+      animation: mathFadeIn 0.5s ease-out;
+    }
+    
+    @keyframes mathFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    /* Enhanced responsive math for mobile */
+    @media (max-width: 640px) {
+      .markdown .mjx-block {
+        font-size: 0.85em;
+        padding: 1em 0.5em;
+        margin: 1.5em 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .markdown .mjx-math {
+        font-size: 1em;
+        padding: 0.2em 0.4em;
+      }
+      .markdown .mjx-tex-math {
+        font-size: 1em;
+        padding: 0.1em 0.3em;
+      }
+      .markdown .mjx-block::before {
+        font-size: 0.7em;
+        padding: 3px 6px;
+        top: -8px;
+        left: 15px;
+      }
+    }
+    
+    /* Math copy button for complex equations */
+    .math-copy-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(5,150,105,0.2);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.8em;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.2s ease;
+      color: #059669;
+    }
+    
+    .markdown .mjx-block:hover .math-copy-btn {
+      opacity: 1;
+    }
+    
+    .math-copy-btn:hover {
+      background: #059669;
+      color: white;
+    }
+    
+    /* Enhanced math performance and visual improvements */
+    .markdown .mjx-container {
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+    
+    /* Math loading indicator */
+    .math-loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f4f6;
+      border-radius: 50%;
+      border-top-color: #059669;
+      animation: mathSpin 1s ease-in-out infinite;
+    }
+    
+    @keyframes mathSpin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Math error handling */
+    .math-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 0.5em;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    
+    .dark .math-error {
+      background: #1f2937;
+      border-color: #7f1d1d;
+      color: #fca5a5;
+    }
+    
+    /* Math tooltip for complex equations */
+    .math-tooltip {
+      position: relative;
+      cursor: help;
+    }
+    
+    .math-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 0.5em;
+      border-radius: 4px;
+      font-size: 0.8em;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+    
+    .math-tooltip:hover::after {
+      opacity: 1;
     }
     /* Responsive markdown for mobile */
     @media (max-width: 640px) {
@@ -1502,6 +1754,688 @@
       color: #00ff90 !important;
       filter: drop-shadow(0 0 8px #00ff90cc);
     }
+    
+    /* Dev mode AI thinking */
+    .dev-mode-hacker .ai-thinking-container {
+      background: linear-gradient(135deg, rgba(0, 255, 144, 0.1), rgba(0, 255, 144, 0.05)) !important;
+      border: 1px solid rgba(0, 255, 144, 0.3) !important;
+      box-shadow: 0 0 20px rgba(0, 255, 144, 0.2) !important;
+    }
+    
+    .dev-mode-hacker .ai-thinking-container::before {
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 144, 0.2), transparent) !important;
+    }
+    
+    .dev-mode-hacker .ai-brain-icon {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      box-shadow: 0 4px 12px rgba(0, 255, 144, 0.4) !important;
+    }
+    
+    .dev-mode-hacker .ai-brain-icon::before {
+      filter: drop-shadow(0 0 4px #00ff90) !important;
+    }
+    
+    .dev-mode-hacker .ai-dot {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+    }
+    
+    .dev-mode-hacker .ai-thinking-text {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      text-shadow: 0 0 8px #00ff90 !important;
+    }
+    
+    .dev-mode-hacker .ai-wave {
+      background: linear-gradient(to top, #00ff90, #00cc73) !important;
+    }
+    
+    /* Dev mode code analysis */
+    .dev-mode-hacker .code-analysis-container {
+      background: linear-gradient(135deg, rgba(0, 255, 144, 0.1), rgba(0, 255, 144, 0.05)) !important;
+      border: 1px solid rgba(0, 255, 144, 0.3) !important;
+      box-shadow: 0 0 20px rgba(0, 255, 144, 0.2) !important;
+    }
+    
+    .dev-mode-hacker .code-analysis-container::before {
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 144, 0.2), transparent) !important;
+    }
+    
+    .dev-mode-hacker .code-brain-icon {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      box-shadow: 0 4px 12px rgba(0, 255, 144, 0.4) !important;
+    }
+    
+    .dev-mode-hacker .code-brain-icon::before {
+      filter: drop-shadow(0 0 4px #00ff90) !important;
+    }
+    
+    .dev-mode-hacker .code-dot {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+    }
+    
+    .dev-mode-hacker .code-analysis-text {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      text-shadow: 0 0 8px #00ff90 !important;
+    }
+    
+    .dev-mode-hacker .code-wave {
+      background: linear-gradient(to top, #00ff90, #00cc73) !important;
+    }
+    
+    .dev-mode-hacker .code-syntax-char {
+      background: linear-gradient(to top, #00ff90, #00cc73) !important;
+    }
+    
+    /* Dev mode document reading */
+    .dev-mode-hacker .document-reading-container {
+      background: linear-gradient(135deg, rgba(0, 255, 144, 0.1), rgba(0, 255, 144, 0.05)) !important;
+      border: 1px solid rgba(0, 255, 144, 0.3) !important;
+      box-shadow: 0 0 20px rgba(0, 255, 144, 0.2) !important;
+    }
+    
+    .dev-mode-hacker .document-reading-container::before {
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 144, 0.2), transparent) !important;
+    }
+    
+    .dev-mode-hacker .document-icon {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      box-shadow: 0 4px 12px rgba(0, 255, 144, 0.4) !important;
+    }
+    
+    .dev-mode-hacker .document-icon::before {
+      filter: drop-shadow(0 0 4px #00ff90) !important;
+    }
+    
+    .dev-mode-hacker .document-reading-text {
+      background: linear-gradient(135deg, #00ff90, #00cc73) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      text-shadow: 0 0 8px #00ff90 !important;
+    }
+    
+    .dev-mode-hacker .document-progress-container {
+      background: rgba(0, 255, 144, 0.3) !important;
+    }
+    
+    .dev-mode-hacker .document-progress-bar {
+      background: linear-gradient(90deg, #00ff90, #00cc73) !important;
+    }
+    
+    .dev-mode-hacker .document-line {
+      background: linear-gradient(90deg, #00ff90, #00cc73) !important;
+    }
+    
+    .dev-mode-hacker .document-scanning {
+      background: linear-gradient(90deg, transparent, #00ff90, transparent) !important;
+    }
+    
+    /* Document Reading Animation */
+    .document-reading-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(251, 146, 60, 0.05));
+      border-radius: 16px;
+      border: 1px solid rgba(245, 158, 11, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .document-reading-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.1), transparent);
+      animation: documentShine 3s ease-in-out infinite;
+    }
+    
+    @keyframes documentShine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Document Icon */
+    .document-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      animation: documentPulse 2s ease-in-out infinite;
+    }
+    
+    .document-icon::before {
+      content: '📄';
+      font-size: 20px;
+      animation: documentRead 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes documentPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); }
+    }
+    
+    @keyframes documentRead {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-3deg); }
+      75% { transform: scale(1.1) rotate(3deg); }
+    }
+    
+    /* Document Reading Text */
+    .document-reading-text {
+      font-size: 1.1em;
+      font-weight: 600;
+      background: linear-gradient(135deg, #d97706, #ea580c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: documentTextGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes documentTextGlow {
+      0%, 100% { filter: drop-shadow(0 0 0 rgba(245, 158, 11, 0)); }
+      50% { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.3)); }
+    }
+    
+    /* Document Reading Progress */
+    .document-progress-container {
+      position: relative;
+      width: 120px;
+      height: 6px;
+      background: rgba(245, 158, 11, 0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-left: 8px;
+    }
+    
+    .document-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #f97316);
+      border-radius: 3px;
+      width: 0%;
+      animation: documentProgress 3s ease-in-out forwards;
+      position: relative;
+    }
+    
+    .document-progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: documentProgressShine 1s ease-in-out infinite;
+    }
+    
+    @keyframes documentProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    
+    @keyframes documentProgressShine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    /* Document Reading Lines */
+    .document-reading-lines {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .document-line {
+      width: 20px;
+      height: 2px;
+      background: linear-gradient(90deg, #f59e0b, #f97316);
+      border-radius: 1px;
+      animation: documentLineRead 1.5s ease-in-out infinite;
+    }
+    
+    .document-line:nth-child(1) { animation-delay: 0s; }
+    .document-line:nth-child(2) { animation-delay: 0.2s; }
+    .document-line:nth-child(3) { animation-delay: 0.4s; }
+    .document-line:nth-child(4) { animation-delay: 0.6s; }
+    .document-line:nth-child(5) { animation-delay: 0.8s; }
+    
+    @keyframes documentLineRead {
+      0%, 100% { width: 8px; opacity: 0.4; }
+      50% { width: 20px; opacity: 1; }
+    }
+    
+    /* Document Scanning Effect */
+    .document-scanning {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+      animation: documentScan 2s ease-in-out infinite;
+      opacity: 0.6;
+    }
+    
+    @keyframes documentScan {
+      0% { top: 20%; opacity: 0; }
+      50% { top: 50%; opacity: 0.8; }
+      100% { top: 80%; opacity: 0; }
+    }
+    
+    /* Dark mode for document reading */
+    .dark .document-reading-container {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 146, 60, 0.1));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    .dark .document-reading-container::before {
+      background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.15), transparent);
+    }
+    
+    .dark .document-icon {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+    
+    .dark .document-reading-text {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dark .document-progress-container {
+      background: rgba(245, 158, 11, 0.3);
+    }
+    
+    .dark .document-progress-bar {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+    
+    .dark .document-line {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+    
+    .dark .document-scanning {
+      background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+    }
+    
+    /* Dark mode cho container chính */
+    .dark .document-reading-container {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 146, 60, 0.1));
+    }
+    
+    .dark #document-filename {
+      color: #9ca3af !important;
+    }
+    
+    /* Animation cho filename */
+    #document-filename {
+      animation: filenameGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes filenameGlow {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    /* Success animation khi hoàn thành */
+    .document-reading-container.completed {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(16, 185, 129, 0.05));
+      border: 1px solid rgba(34, 197, 94, 0.1);
+    }
+    
+    .document-reading-container.completed .document-icon {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+    
+    .document-reading-container.completed .document-icon::before {
+      content: '✅';
+    }
+    
+    .document-reading-container.completed .document-reading-text {
+      background: linear-gradient(135deg, #16a34a, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Responsive design for document reading */
+    @media (max-width: 640px) {
+      .document-reading-container {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      
+      .document-icon {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .document-icon::before {
+        font-size: 16px;
+      }
+      
+      .document-reading-text {
+        font-size: 1em;
+      }
+      
+      .document-progress-container {
+        width: 80px;
+        height: 4px;
+      }
+      
+      .document-reading-lines {
+        right: 12px;
+        gap: 1px;
+      }
+      
+      .document-line {
+        width: 16px;
+        height: 1px;
+      }
+    }
+    
+    /* Hover effects for document reading */
+    .document-reading-container:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .document-reading-container:hover .document-icon {
+      animation: documentPulse 1s ease-in-out infinite;
+    }
+    
+    .document-reading-container:hover .document-reading-text {
+      animation: documentTextGlow 1s ease-in-out infinite;
+    }
+    
+    /* Code Analysis Animation */
+    .code-analysis-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(16, 185, 129, 0.05));
+      border-radius: 16px;
+      border: 1px solid rgba(34, 197, 94, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .code-analysis-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+      animation: codeShine 2.5s ease-in-out infinite;
+    }
+    
+    @keyframes codeShine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Code Brain Icon */
+    .code-brain-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      animation: codePulse 2s ease-in-out infinite;
+    }
+    
+    .code-brain-icon::before {
+      content: '💻';
+      font-size: 20px;
+      animation: codeThink 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes codePulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
+    }
+    
+    @keyframes codeThink {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
+    }
+    
+    /* Code Processing Dots */
+    .code-processing-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 8px;
+    }
+    
+    .code-dot {
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      border-radius: 50%;
+      animation: codeDotPulse 1.4s ease-in-out infinite;
+    }
+    
+    .code-dot:nth-child(1) { animation-delay: 0s; }
+    .code-dot:nth-child(2) { animation-delay: 0.2s; }
+    .code-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes codeDotPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        opacity: 0.6; 
+        background: linear-gradient(135deg, #22c55e, #10b981);
+      }
+      50% { 
+        transform: scale(1.3); 
+        opacity: 1; 
+        background: linear-gradient(135deg, #16a34a, #059669);
+      }
+    }
+    
+    /* Code Analysis Text */
+    .code-analysis-text {
+      font-size: 1.1em;
+      font-weight: 600;
+      background: linear-gradient(135deg, #16a34a, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: codeTextGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes codeTextGlow {
+      0%, 100% { filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0)); }
+      50% { filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.3)); }
+    }
+    
+    /* Code Analysis Waves */
+    .code-analysis-waves {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .code-wave {
+      width: 3px;
+      height: 20px;
+      background: linear-gradient(to top, #22c55e, #10b981);
+      border-radius: 2px;
+      animation: codeWave 1.2s ease-in-out infinite;
+    }
+    
+    .code-wave:nth-child(1) { animation-delay: 0s; }
+    .code-wave:nth-child(2) { animation-delay: 0.1s; }
+    .code-wave:nth-child(3) { animation-delay: 0.2s; }
+    .code-wave:nth-child(4) { animation-delay: 0.3s; }
+    .code-wave:nth-child(5) { animation-delay: 0.4s; }
+    
+    @keyframes codeWave {
+      0%, 100% { height: 8px; opacity: 0.4; }
+      50% { height: 20px; opacity: 1; }
+    }
+    
+    /* Code Syntax Highlighting Animation */
+    .code-syntax-animation {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 2px;
+      opacity: 0.7;
+    }
+    
+    .code-syntax-char {
+      width: 2px;
+      height: 12px;
+      background: linear-gradient(to top, #22c55e, #10b981);
+      border-radius: 1px;
+      animation: codeSyntax 1.5s ease-in-out infinite;
+    }
+    
+    .code-syntax-char:nth-child(1) { animation-delay: 0s; }
+    .code-syntax-char:nth-child(2) { animation-delay: 0.1s; }
+    .code-syntax-char:nth-child(3) { animation-delay: 0.2s; }
+    .code-syntax-char:nth-child(4) { animation-delay: 0.3s; }
+    .code-syntax-char:nth-child(5) { animation-delay: 0.4s; }
+    .code-syntax-char:nth-child(6) { animation-delay: 0.5s; }
+    .code-syntax-char:nth-child(7) { animation-delay: 0.6s; }
+    
+    @keyframes codeSyntax {
+      0%, 100% { height: 8px; opacity: 0.3; }
+      50% { height: 16px; opacity: 1; }
+    }
+    
+    /* Dark mode for code analysis */
+    .dark .code-analysis-container {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .dark .code-analysis-container::before {
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.15), transparent);
+    }
+    
+    .dark .code-brain-icon {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    }
+    
+    .dark .code-dot {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+    }
+    
+    .dark .code-dot:nth-child(1),
+    .dark .code-dot:nth-child(2),
+    .dark .code-dot:nth-child(3) {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+    }
+    
+    .dark .code-analysis-text {
+      background: linear-gradient(135deg, #86efac, #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dark .code-wave {
+      background: linear-gradient(to top, #4ade80, #22c55e);
+    }
+    
+    .dark .code-syntax-char {
+      background: linear-gradient(to top, #4ade80, #22c55e);
+    }
+    
+    /* Responsive design for code analysis */
+    @media (max-width: 640px) {
+      .code-analysis-container {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      
+      .code-brain-icon {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .code-brain-icon::before {
+        font-size: 16px;
+      }
+      
+      .code-analysis-text {
+        font-size: 1em;
+      }
+      
+      .code-processing-dots {
+        gap: 6px;
+      }
+      
+      .code-dot {
+        width: 6px;
+        height: 6px;
+      }
+      
+      .code-analysis-waves {
+        right: 12px;
+        gap: 2px;
+      }
+      
+      .code-wave {
+        width: 2px;
+        height: 16px;
+      }
+    }
+    
+    /* Hover effects for code analysis */
+    .code-analysis-container:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .code-analysis-container:hover .code-brain-icon {
+      animation: codePulse 1s ease-in-out infinite;
+    }
+    
+    .code-analysis-container:hover .code-analysis-text {
+      animation: codeTextGlow 1s ease-in-out infinite;
+    }
     /* Animation for dev mode hint */
     @keyframes devModeHint {
       0% { transform: scale(0.9) translateY(-10px); opacity: 0; }
@@ -1573,20 +2507,272 @@
       color: #fff !important;
       filter: drop-shadow(0 0 8px #fff8);
     }
+    /* Modern AI Thinking Animation */
     .hieai-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #e0e7ef;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+      position: relative;
+    }
+    
+    .hieai-spinner::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid rgba(37, 99, 235, 0.2);
       border-top: 3px solid #2563eb;
       border-radius: 50%;
-      animation: hieai-spin 1s linear infinite;
-      margin-right: 10px;
-      vertical-align: middle;
+      animation: aiSpin 1.2s linear infinite;
     }
-    @keyframes hieai-spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
+    
+    .hieai-spinner::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 60%;
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-top: 2px solid #8b5cf6;
+      border-radius: 50%;
+      animation: aiSpin 0.8s linear infinite reverse;
+    }
+    
+    @keyframes aiSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* AI Thinking Container */
+    .ai-thinking-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(139, 92, 246, 0.05));
+      border-radius: 16px;
+      border: 1px solid rgba(37, 99, 235, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ai-thinking-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+      animation: aiShine 2s ease-in-out infinite;
+    }
+    
+    @keyframes aiShine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* AI Brain Icon */
+    .ai-brain-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      animation: aiPulse 2s ease-in-out infinite;
+    }
+    
+    .ai-brain-icon::before {
+      content: '🧠';
+      font-size: 20px;
+      animation: aiThink 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes aiPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+    }
+    
+    @keyframes aiThink {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
+    }
+    
+    /* AI Processing Dots */
+    .ai-processing-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 8px;
+    }
+    
+    .ai-dot {
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      animation: aiDotPulse 1.4s ease-in-out infinite;
+    }
+    
+    .ai-dot:nth-child(1) { animation-delay: 0s; }
+    .ai-dot:nth-child(2) { animation-delay: 0.2s; }
+    .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes aiDotPulse {
+      0%, 100% { 
+        transform: scale(1); 
+        opacity: 0.6; 
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      }
+      50% { 
+        transform: scale(1.3); 
+        opacity: 1; 
+        background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+      }
+    }
+    
+    /* AI Thinking Text */
+    .ai-thinking-text {
+      font-size: 1.1em;
+      font-weight: 600;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: aiTextGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes aiTextGlow {
+      0%, 100% { filter: drop-shadow(0 0 0 rgba(37, 99, 235, 0)); }
+      50% { filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.3)); }
+    }
+    
+    /* AI Analysis Waves */
+    .ai-analysis-waves {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .ai-wave {
+      width: 3px;
+      height: 20px;
+      background: linear-gradient(to top, #3b82f6, #8b5cf6);
+      border-radius: 2px;
+      animation: aiWave 1.2s ease-in-out infinite;
+    }
+    
+    .ai-wave:nth-child(1) { animation-delay: 0s; }
+    .ai-wave:nth-child(2) { animation-delay: 0.1s; }
+    .ai-wave:nth-child(3) { animation-delay: 0.2s; }
+    .ai-wave:nth-child(4) { animation-delay: 0.3s; }
+    .ai-wave:nth-child(5) { animation-delay: 0.4s; }
+    
+    @keyframes aiWave {
+      0%, 100% { height: 8px; opacity: 0.4; }
+      50% { height: 20px; opacity: 1; }
+    }
+    
+    /* Dark mode support */
+    .dark .ai-thinking-container {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+    
+    .dark .ai-thinking-container::before {
+      background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.15), transparent);
+    }
+    
+    .dark .ai-brain-icon {
+      background: linear-gradient(135deg, #60a5fa, #a855f7);
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+    }
+    
+    .dark .ai-dot {
+      background: linear-gradient(135deg, #60a5fa, #a855f7);
+    }
+    
+    .dark .ai-dot:nth-child(1),
+    .dark .ai-dot:nth-child(2),
+    .dark .ai-dot:nth-child(3) {
+      background: linear-gradient(135deg, #60a5fa, #a855f7);
+    }
+    
+    .dark .ai-thinking-text {
+      background: linear-gradient(135deg, #93c5fd, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dark .ai-wave {
+      background: linear-gradient(to top, #60a5fa, #a855f7);
+    }
+    
+    /* Responsive design for AI thinking */
+    @media (max-width: 640px) {
+      .ai-thinking-container {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      
+      .ai-brain-icon {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .ai-brain-icon::before {
+        font-size: 16px;
+      }
+      
+      .ai-thinking-text {
+        font-size: 1em;
+      }
+      
+      .ai-processing-dots {
+        gap: 6px;
+      }
+      
+      .ai-dot {
+        width: 6px;
+        height: 6px;
+      }
+      
+      .ai-analysis-waves {
+        right: 12px;
+        gap: 2px;
+      }
+      
+      .ai-wave {
+        width: 2px;
+        height: 16px;
+      }
+    }
+    
+    /* Hover effects for AI thinking */
+    .ai-thinking-container:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .ai-thinking-container:hover .ai-brain-icon {
+      animation: aiPulse 1s ease-in-out infinite;
+    }
+    
+    .ai-thinking-container:hover .ai-thinking-text {
+      animation: aiTextGlow 1s ease-in-out infinite;
     }
     .plus-menu {
       position: absolute;
@@ -2090,6 +3276,67 @@
       }
       return false;
     }
+    
+    // Hàm nhận diện yêu cầu viết code
+    function isCodeRequest(message) {
+      const lower = message.toLowerCase();
+      
+      // Các từ khóa liên quan đến code
+      const codeKeywords = [
+        'viết code', 'tạo code', 'lập trình', 'programming', 'code', 'script', 'function', 'class',
+        'component', 'app', 'application', 'website', 'web app', 'api', 'database', 'algorithm',
+        'html', 'css', 'javascript', 'js', 'react', 'vue', 'angular', 'node', 'python', 'java', 'c++',
+        'php', 'sql', 'typescript', 'ts', 'next.js', 'tailwind', 'bootstrap', 'jquery', 'express',
+        'mongodb', 'mysql', 'postgresql', 'firebase', 'aws', 'docker', 'kubernetes', 'git',
+        'hàm', 'function', 'method', 'variable', 'array', 'object', 'loop', 'condition', 'if else',
+        'switch case', 'try catch', 'async await', 'promise', 'callback', 'event', 'dom', 'json',
+        'xml', 'rest api', 'graphql', 'authentication', 'authorization', 'encryption', 'hashing',
+        'sorting', 'searching', 'recursion', 'dynamic programming', 'data structure', 'algorithm',
+        'design pattern', 'mvc', 'mvvm', 'microservice', 'monolith', 'serverless', 'lambda',
+        'deployment', 'ci/cd', 'testing', 'unit test', 'integration test', 'e2e test', 'jest',
+        'mocha', 'cypress', 'selenium', 'webpack', 'babel', 'eslint', 'prettier', 'npm', 'yarn'
+      ];
+      
+      // Kiểm tra có từ khóa code không
+      const hasCodeKeyword = codeKeywords.some(keyword => lower.includes(keyword));
+      
+      // Các cụm từ yêu cầu viết code
+      const codeRequestPatterns = [
+        /(viết|tạo|làm|code|program|script|function|class|component|app|website|api|database|algorithm)/i,
+        /(hãy|giúp|please|can you|could you|would you|bạn có thể|làm ơn|giúp tôi|giúp mình|cho tôi|cho mình)/i,
+        /(viết|tạo|làm|code|program|script|function|class|component|app|website|api|database|algorithm)/i,
+        /(bằng|using|with|in|cho|language|framework|library|tool)/i
+      ];
+      
+      // Kiểm tra các pattern yêu cầu code
+      const hasCodeRequest = codeRequestPatterns.some(pattern => pattern.test(message));
+      
+      // Kiểm tra có từ khóa ngôn ngữ lập trình cụ thể
+      const programmingLanguages = [
+        'javascript', 'js', 'typescript', 'ts', 'python', 'java', 'c++', 'c#', 'php', 'ruby',
+        'go', 'rust', 'swift', 'kotlin', 'dart', 'scala', 'perl', 'r', 'matlab', 'assembly',
+        'html', 'css', 'sql', 'bash', 'shell', 'powershell', 'yaml', 'json', 'xml', 'markdown'
+      ];
+      
+      const hasLanguage = programmingLanguages.some(lang => lower.includes(lang));
+      
+      // Kiểm tra có từ khóa framework/library
+      const frameworks = [
+        'react', 'vue', 'angular', 'svelte', 'next.js', 'nuxt', 'express', 'django', 'flask',
+        'spring', 'laravel', 'symfony', 'rails', 'asp.net', 'fastapi', 'gin', 'echo',
+        'tailwind', 'bootstrap', 'material-ui', 'ant design', 'chakra ui', 'styled-components',
+        'jquery', 'lodash', 'moment', 'axios', 'fetch', 'socket.io', 'prisma', 'sequelize',
+        'mongoose', 'typeorm', 'drizzle', 'supabase', 'firebase', 'aws', 'azure', 'gcp'
+      ];
+      
+      const hasFramework = frameworks.some(framework => lower.includes(framework));
+      
+      // Trả về true nếu có ít nhất 2 điều kiện thỏa mãn
+      const conditions = [hasCodeKeyword, hasCodeRequest, hasLanguage, hasFramework];
+      const trueConditions = conditions.filter(Boolean).length;
+      
+      return trueConditions >= 2 || (hasLanguage && hasFramework) || (hasCodeKeyword && hasLanguage);
+    }
 
     // Hàm gọi API tạo ảnh
     async function callGeminiImageAPI(prompt) {
@@ -2119,6 +3366,17 @@ Bạn có thể tạo ảnh theo yêu cầu người dùng
 - Cung cấp thông tin chính xác, cập nhật, và đa lĩnh vực.
 - Trợ giúp người dùng một cách tự nhiên, hiệu quả và giàu cảm xúc khi phù hợp.
 - Duy trì phong cách giao tiếp thân thiện, chuyên nghiệp, luôn hướng đến trải nghiệm người dùng.
+
+--- Hiểu ---
+- Bạn có chức năng và có thể tạo ảnh, khi người dùng yêu cầu tạo ảnh thì mới tạo, còn không nếu có chữ tạo mà không liên quan đến tao ảnh mà người dùng kêu thì không tạo.
+  - Bạn có thể phân tích tệp tin mà người dùng tải lên, hãy chỉ người dùng bấm vào dấu + bên dưới phần nhập liệu rồi gửi file lên cho bạn đọc.
+  - Bạn có khả năng hiển thị toán học, vật lý, hóa học, sinh học với công thức LaTeX đầy đủ. Sử dụng:
+    * Inline math: $x^2 + y^2 = z^2$
+    * Block math: $$\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$$
+    * Physics: $\vec{F} = m\vec{a}$, $E = mc^2$
+    * Chemistry: $\ce{H2O + CO2 -> H2CO3}$
+    * Biology: $DNA \rightarrow RNA \rightarrow Protein$
+
 
 --- 💬 Ngôn ngữ ---
 - Trả lời bằng **tiếng Việt** theo mặc định.
@@ -2182,7 +3440,65 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
     // Biến toàn cục lưu nội dung file đã upload
     let currentFileContent = null;
     let currentFileName = null;
-    // Animation loading DeepSeek style
+    // Animation đọc tài liệu hiện đại
+    function showDocumentReadingAnimation(filename) {
+      const chatContainer = document.getElementById('chat-container');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'flex justify-start';
+      loadingDiv.id = 'document-reading-animation';
+      
+      // Thêm animation fade in
+      loadingDiv.style.opacity = '0';
+      loadingDiv.style.transform = 'translateY(20px)';
+      loadingDiv.style.transition = 'all 0.5s ease';
+      
+      loadingDiv.innerHTML = `
+        <div class="max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3">
+          <div class="document-reading-container">
+            <div class="document-icon"></div>
+            <div class="document-reading-text">Nexa X đang đọc tài liệu</div>
+            <div class="document-progress-container">
+              <div class="document-progress-bar"></div>
+            </div>
+            <div class="document-reading-lines">
+              <div class="document-line"></div>
+              <div class="document-line"></div>
+              <div class="document-line"></div>
+              <div class="document-line"></div>
+              <div class="document-line"></div>
+            </div>
+            <div class="document-scanning"></div>
+          </div>
+          <div style="text-align: center; margin-top: 8px; font-size: 0.9em; color: #6b7280;">
+            <span id="document-filename">${filename}</span>
+          </div>
+        </div>
+      `;
+      
+      chatContainer.appendChild(loadingDiv);
+      scrollToBottom();
+      
+      // Fade in animation
+      setTimeout(() => {
+        loadingDiv.style.opacity = '1';
+        loadingDiv.style.transform = 'translateY(0)';
+      }, 100);
+      
+      // Tự động ẩn sau 3 giây với fade out
+      setTimeout(() => {
+        loadingDiv.style.opacity = '0';
+        loadingDiv.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          if (loadingDiv.parentNode) {
+            loadingDiv.parentNode.removeChild(loadingDiv);
+          }
+        }, 500);
+      }, 3000);
+      
+      return loadingDiv;
+    }
+    
+    // Animation loading DeepSeek style (giữ lại cho tương thích)
     function showFileLoadingAnimation(filename) {
       const chatContainer = document.getElementById('chat-container');
       const loadingDiv = document.createElement('div');
@@ -2225,19 +3541,24 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
         return;
       }
       currentFileName = file.name;
-      // Animation loading mới
-      const loadingDiv = showFileLoadingAnimationV2(file.name);
+      // Animation đọc tài liệu mới
+      const loadingDiv = showDocumentReadingAnimation(file.name);
       try {
         let content = await readFileContent(file);
-        removeFileLoadingAnimationV2();
-        currentFileContent = content;
-        hideWelcomeMessage();
-        // Thêm vào chat: "Đã tải lên file ..."
-        addMessage('user', `Đã tải lên file: **${file.name}**`);
-        updateFilePreview();
-        // KHÔNG gọi analyzeFileWithAI nữa
+        // Đợi animation hoàn thành (3 giây)
+        setTimeout(() => {
+          currentFileContent = content;
+          hideWelcomeMessage();
+          // Thêm vào chat: "Đã tải lên file ..."
+          addMessage('user', `Đã tải lên file: **${file.name}**`);
+          updateFilePreview();
+          // KHÔNG gọi analyzeFileWithAI nữa
+        }, 3000);
       } catch (err) {
-        removeFileLoadingAnimationV2();
+        // Nếu có lỗi, ẩn animation ngay lập tức
+        if (loadingDiv && loadingDiv.parentNode) {
+          loadingDiv.parentNode.removeChild(loadingDiv);
+        }
         addMessage('assistant', 'Không thể đọc file này. Vui lòng thử lại với định dạng khác.');
       }
       e.target.value = '';
@@ -2350,15 +3671,88 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
       setTimeout(checkScrollPosition, 100);
     }
     
-    // Cấu hình marked.js để hiển thị markdown
+    // Enhanced marked.js configuration for comprehensive markdown and math support
     marked.setOptions({
-      breaks: false, // Không tự xuống dòng khi chỉ có 1 dấu xuống dòng
+      breaks: false,
       gfm: true,
       highlight: function(code, lang) {
         const language = hljs.getLanguage(lang) ? lang : 'plaintext';
         return hljs.highlight(code, { language }).value;
-      }
+      },
+      // Custom renderer for enhanced math support
+      renderer: new marked.Renderer()
     });
+    
+    // Enhanced math detection and processing
+    function enhanceMathRendering(content) {
+      // Add copy functionality for math equations
+      function addMathCopyButtons() {
+        document.querySelectorAll('.mjx-block').forEach((block, index) => {
+          if (!block.querySelector('.math-copy-btn')) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'math-copy-btn';
+            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            copyBtn.title = 'Sao chép công thức';
+            copyBtn.onclick = () => {
+              const mathText = block.textContent.trim();
+              navigator.clipboard.writeText(mathText).then(() => {
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = '#059669';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                  copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                  copyBtn.style.background = 'rgba(255,255,255,0.9)';
+                  copyBtn.style.color = '#059669';
+                }, 2000);
+              });
+            };
+            block.appendChild(copyBtn);
+          }
+        });
+      }
+      
+      // Call the function after MathJax renders
+      setTimeout(addMathCopyButtons, 100);
+      // Detect and classify math content
+      const physicsKeywords = ['\\vec', '\\mathbf', '\\nabla', '\\partial', '\\int', '\\sum', '\\prod', 'F=', 'E=', 'v=', 'a=', 'm=', 'g=', '\\alpha', '\\beta', '\\gamma', '\\delta', '\\theta', '\\phi', '\\omega', '\\lambda', '\\mu', '\\sigma', '\\tau', '\\rho', '\\epsilon', '\\varepsilon'];
+      const chemistryKeywords = ['\\ce{', '\\chem{', 'H2O', 'CO2', 'CH4', 'NaCl', 'HCl', 'NaOH', 'H2SO4', '\\rightarrow', '\\leftarrow', '\\leftrightarrow', '\\ceq', '\\ce{', '\\chem{'];
+      const biologyKeywords = ['\\ce{', 'DNA', 'RNA', 'ATP', 'ADP', 'NAD+', 'NADH', 'FAD', 'FADH2', '\\alpha', '\\beta', '\\gamma', '\\delta', '\\epsilon', '\\zeta', '\\eta', '\\theta', '\\iota', '\\kappa', '\\lambda', '\\mu', '\\nu', '\\xi', '\\omicron', '\\pi', '\\rho', '\\sigma', '\\tau', '\\upsilon', '\\phi', '\\chi', '\\psi', '\\omega'];
+      
+      // Enhanced block math processing with subject classification
+      content = content.replace(/\$\$([\s\S]*?)\$\$/g, function(match, math) {
+        let className = 'math-block';
+        
+        // Classify the math content
+        const mathText = math.toLowerCase();
+        if (physicsKeywords.some(keyword => mathText.includes(keyword.toLowerCase()))) {
+          className += ' physics';
+        } else if (chemistryKeywords.some(keyword => mathText.includes(keyword.toLowerCase()))) {
+          className += ' chemistry';
+        } else if (biologyKeywords.some(keyword => mathText.includes(keyword.toLowerCase()))) {
+          className += ' biology';
+        }
+        
+        return `<div class="mjx-block ${className}">$$${math}$$</div>`;
+      });
+      
+      // Enhanced inline math processing
+      content = content.replace(/\$([^\$\n]+?)\$/g, function(match, math) {
+        return `<span class="mjx-inline">$${math}$</span>`;
+      });
+      
+      // Support for LaTeX environments
+      content = content.replace(/\\begin\{([^}]+)\}([\s\S]*?)\\end\{\1\}/g, function(match, env, content) {
+        let className = 'math-block';
+        if (['equation', 'align', 'gather', 'multline'].includes(env)) {
+          className += ' physics';
+        } else if (['ce', 'chem'].includes(env)) {
+          className += ' chemistry';
+        }
+        return `<div class="mjx-block ${className}">\\begin{${env}}${content}\\end{${env}}</div>`;
+      });
+      
+      return content;
+    }
     
     // Tải lịch sử trò chuyện vào giao diện
     function loadChatHistory() {
@@ -2417,8 +3811,9 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
         // Khi bắt đầu hiện chữ AI, đảm bảo nút dừng vẫn hiện
         isAIReplying = true;
         updateSendButtonForAI();
-        // Parse markdown và tách code block
-        let parsedContent = marked.parse(content);
+        // Enhanced markdown parsing with math support
+        let parsedContent = enhanceMathRendering(content);
+        parsedContent = marked.parse(parsedContent);
         // Tìm và thay thế các khối code bằng bảng code hiện đại, tách header và body
         parsedContent = parsedContent.replace(/<pre><code( class="language-(.+?)")?>([\s\S]*?)<\/code><\/pre>/g, function(match, langClass, lang, code) {
           lang = lang || 'code';
@@ -2483,7 +3878,9 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
         }
         typeNextChild(0);
       } else {
-        contentDiv.innerHTML = marked.parse(content);
+        // Enhanced markdown parsing for user messages too
+        let parsedContent = enhanceMathRendering(content);
+        contentDiv.innerHTML = marked.parse(parsedContent);
       }
 
       bubble.appendChild(contentDiv);
@@ -2531,9 +3928,59 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
           }
         });
         
-        if (window.MathJax) {
-          MathJax.typesetPromise();
-        }
+            // Enhanced real-time math rendering with error handling
+    if (window.MathJax) {
+      MathJax.typesetPromise().then(() => {
+        // Add animation to newly rendered math elements
+        document.querySelectorAll('.mjx-math, .mjx-block').forEach(mathEl => {
+          if (!mathEl.classList.contains('math-animated')) {
+            mathEl.classList.add('math-animated');
+            mathEl.style.opacity = '0';
+            mathEl.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+              mathEl.style.transition = 'all 0.5s ease';
+              mathEl.style.opacity = '1';
+              mathEl.style.transform = 'translateY(0)';
+            }, 100);
+          }
+        });
+        
+        // Add copy buttons to complex equations
+        document.querySelectorAll('.mjx-block').forEach((block, index) => {
+          if (!block.querySelector('.math-copy-btn')) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'math-copy-btn';
+            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            copyBtn.title = 'Sao chép công thức';
+            copyBtn.onclick = () => {
+              const mathText = block.textContent.trim();
+              navigator.clipboard.writeText(mathText).then(() => {
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = '#059669';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                  copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                  copyBtn.style.background = 'rgba(255,255,255,0.9)';
+                  copyBtn.style.color = '#059669';
+                }, 2000);
+              });
+            };
+            block.appendChild(copyBtn);
+          }
+        });
+      }).catch(err => {
+        console.log('MathJax rendering error:', err);
+        // Show error message for failed math rendering
+        document.querySelectorAll('.mjx-math, .mjx-block').forEach(mathEl => {
+          if (mathEl.textContent.includes('\\')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'math-error';
+            errorDiv.innerHTML = `Lỗi hiển thị công thức: ${mathEl.textContent}`;
+            mathEl.parentNode.insertBefore(errorDiv, mathEl);
+          }
+        });
+      });
+    }
         document.querySelectorAll('.modern-code-body code').forEach(block => {
           hljs.highlightElement(block);
         });
@@ -2560,7 +4007,24 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
             element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
               hljs.highlightElement(block);
             });
-            if (window.MathJax) MathJax.typesetPromise();
+            // Enhanced real-time math rendering during typing completion
+            if (window.MathJax) {
+              MathJax.typesetPromise().then(() => {
+                // Animate math elements when typing is complete
+                element.querySelectorAll('.mjx-math, .mjx-block').forEach(mathEl => {
+                  if (!mathEl.classList.contains('math-animated')) {
+                    mathEl.classList.add('math-animated');
+                    mathEl.style.opacity = '0';
+                    mathEl.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                      mathEl.style.transition = 'all 0.4s ease';
+                      mathEl.style.opacity = '1';
+                      mathEl.style.transform = 'scale(1)';
+                    }, 50);
+                  }
+                });
+              });
+            }
             if (cb) cb();
             else {
               const event = new Event('typingDone');
@@ -2610,7 +4074,24 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
             element.querySelectorAll && element.querySelectorAll('code').forEach(block => {
               hljs.highlightElement(block);
             });
-            if (window.MathJax) MathJax.typesetPromise();
+            // Enhanced real-time math rendering when typing finishes
+            if (window.MathJax) {
+              MathJax.typesetPromise().then(() => {
+                // Animate math elements when typing finishes
+                element.querySelectorAll('.mjx-math, .mjx-block').forEach(mathEl => {
+                  if (!mathEl.classList.contains('math-animated')) {
+                    mathEl.classList.add('math-animated');
+                    mathEl.style.opacity = '0';
+                    mathEl.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                      mathEl.style.transition = 'all 0.4s ease';
+                      mathEl.style.opacity = '1';
+                      mathEl.style.transform = 'scale(1)';
+                    }, 50);
+                  }
+                });
+              });
+            }
             if (cb) cb();
             else {
               const event = new Event('typingDone');
@@ -2654,7 +4135,7 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
         document.getElementById('file-preview-container').style.display = 'none';
       }
       if (isImageRequest(message)) {
-        const typingIndicator = showTypingIndicator('image');
+        const typingIndicator = showTypingIndicator('image', message);
         try {
           const imageData = await callGeminiImageAPI(message);
           removeTypingIndicator(typingIndicator);
@@ -2688,7 +4169,7 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
       // Đặt trạng thái AI đang trả lời NGAY khi gửi request
       isAIReplying = true;
       updateSendButtonForAI();
-      const typingIndicator = showTypingIndicator();
+      const typingIndicator = showTypingIndicator('text', message);
       aiAbortController = new AbortController();
       aiStopped = false;
       // === Tối ưu token ===
@@ -2754,13 +4235,17 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
     }
     
     // Hiển thị hiệu ứng AI đang trả lời với hoạt ảnh đẹp
-    function showTypingIndicator(type = 'text') {
+    function showTypingIndicator(type = 'text', message = '') {
       isAIReplying = true;
       updateSendButtonForAI();
       const chatContainer = document.getElementById('chat-container');
       const typingDiv = document.createElement('div');
       typingDiv.className = 'flex justify-start';
       const bubble = document.createElement('div');
+      
+      // Kiểm tra xem có phải yêu cầu code không
+      const isCode = isCodeRequest(message);
+      
       if (type === 'image') {
         // Animation hiện đại và đẹp hơn cho tạo ảnh AI
         bubble.innerHTML = `
@@ -2880,11 +4365,58 @@ Bạn là **Nexa X** — người bạn đồng hành đáng tin cậy của ng�
         `;
         bubble.className = 'max-w-[85%] px-0 py-0 bg-transparent';
       } else {
-        bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
-        bubble.innerHTML = `
-          <span class="hieai-spinner"></span>
-          <span style="font-size:1.1em;color:#2563eb;font-weight:500;">Hie AI đang xử lý..</span>
-        `;
+        if (isCode) {
+          // Hiệu ứng đặc biệt cho yêu cầu code
+          bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
+          bubble.innerHTML = `
+            <div class="code-analysis-container">
+              <div class="code-brain-icon"></div>
+              <div class="code-analysis-text">Nexa X đang phân tích và viết code</div>
+              <div class="code-processing-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <div class="code-analysis-waves">
+                <div class="code-wave"></div>
+                <div class="code-wave"></div>
+                <div class="code-wave"></div>
+                <div class="code-wave"></div>
+                <div class="code-wave"></div>
+              </div>
+              <div class="code-syntax-animation">
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+                <div class="code-syntax-char"></div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Hiệu ứng thông thường cho text
+          bubble.className = 'max-w-[85%] bg-gray-100 rounded-2xl px-4 py-3 typing-indicator';
+          bubble.innerHTML = `
+            <div class="ai-thinking-container">
+              <div class="ai-brain-icon"></div>
+              <div class="ai-thinking-text">Nexa X đang phân tích dữ liệu</div>
+              <div class="ai-processing-dots">
+                <div class="ai-dot"></div>
+                <div class="ai-dot"></div>
+                <div class="ai-dot"></div>
+              </div>
+              <div class="ai-analysis-waves">
+                <div class="ai-wave"></div>
+                <div class="ai-wave"></div>
+                <div class="ai-wave"></div>
+                <div class="ai-wave"></div>
+                <div class="ai-wave"></div>
+              </div>
+            </div>
+          `;
+        }
       }
       typingDiv.appendChild(bubble);
       chatContainer.appendChild(typingDiv);
